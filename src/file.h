@@ -8,4 +8,10 @@ struct File {
     std::vector<std::string> lines;
 
     File(std::filesystem::path path);
+
+    File(std::istream &in) {
+        load(in);
+    }
+
+    void load(std::istream &stream);
 };

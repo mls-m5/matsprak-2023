@@ -12,8 +12,7 @@ enum TokenType {
     BraceEnd,
     Comma,
     Semicolon,
-    EqualsSign,
-    // Add more types
+    BinaryOperator,
 };
 
 struct Token {

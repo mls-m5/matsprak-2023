@@ -17,8 +17,9 @@ TokenType getTokenType(const std::string_view &text) {
         return Comma;
     if (text == ";")
         return Semicolon;
-    if (text == "=")
-        return EqualsSign;
+    if (text == "=" || text == "+" || text == "-" || text == "*" ||
+        text == "/" || text == "?")
+        return BinaryOperator;
 
     if (std::regex_match(text.begin(), text.end(), std::regex(R"(\d+)"))) {
         return NumericLiteral;
@@ -30,14 +31,14 @@ TokenType getTokenType(const std::string_view &text) {
 void tokenizeLine(const std::string &line,
                   std::vector<Token> &tokens,
                   const std::shared_ptr<File> &file) {
-    static const std::regex token_regex(R"((\(|\)|\{|\}|,|;|=|\d+|[\w<>]+))");
+    static const std::regex token_regex(
+        R"((\(|\)|\{|\}|,|;|=|\+|-|\*|/|\?|\d+|[\w<>]+))");
 
     std::sregex_iterator it(line.begin(), line.end(), token_regex);
     std::sregex_iterator end;
 
     while (it != end) {
         Token token;
-        //        token._file = file;
         token._text = it->str();
         token._type = getTokenType(token._text);
 

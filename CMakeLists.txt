@@ -1,32 +1,16 @@
-
 cmake_minimum_required(VERSION 3.23)
 project(matsprak-2023)
 
-add_executable(
-    matsprak-2023
-    src/main.cpp
-    src/file.cpp
-    src/tokenizer.cpp
-)
+add_library(matsprak_lib STATIC src/tokenizer.cpp src/file.cpp)
+target_compile_features(matsprak_lib PRIVATE cxx_std_20)
 
-
-target_compile_features(
-    matsprak-2023
-    PRIVATE
-    cxx_std_20
-    )
+add_executable(matsprak-2023 src/main.cpp)
+target_link_libraries(matsprak-2023 PRIVATE matsprak_lib)
 
 find_package(Threads)
-target_link_libraries(
-    matsprak-2023
-    PRIVATE
-    ${CMAKE_THREAD_LIBS_INIT}
-    )
+target_link_libraries(matsprak-2023 PRIVATE ${CMAKE_THREAD_LIBS_INIT})
 
+file(COPY demo DESTINATION .)
 
-file(
-    COPY
-    demo
-    DESTINATION
-    .
-)
+add_subdirectory(lib)
+add_subdirectory(test)
