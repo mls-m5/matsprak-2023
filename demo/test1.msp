@@ -1,0 +1,24 @@
+
+
+template (typename T, int num)
+export struct Array {
+    _value: T[num];
+}
+
+export struct Ship {
+    x: float;
+    y: float;
+}
+
+fn main() {
+    let x = new(Array(int, 10));
+
+    let s = new(Ship(
+        x = 10,
+        y = 20,
+    ));
+
+    let a = new(Array(Ship, 20, {}))
+
+    print(sys.args(1));
+}
