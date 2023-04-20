@@ -6,6 +6,7 @@ add_executable(
     matsprak-2023
     src/main.cpp
     src/file.cpp
+    src/tokenizer.cpp
 )
 
 
