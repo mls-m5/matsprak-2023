@@ -8,3 +8,4 @@ endfunction()
 
 
 add_test_executable(tokenizer)
+add_test_executable(parser)

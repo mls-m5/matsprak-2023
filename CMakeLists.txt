@@ -1,7 +1,13 @@
 cmake_minimum_required(VERSION 3.23)
 project(matsprak-2023)
 
-add_library(matsprak_lib STATIC src/tokenizer.cpp src/file.cpp)
+add_library(
+    matsprak_lib
+    STATIC
+    src/tokenizer.cpp
+    src/file.cpp
+    src/parser.cpp
+)
 target_compile_features(matsprak_lib PRIVATE cxx_std_20)
 
 add_executable(matsprak-2023 src/main.cpp)

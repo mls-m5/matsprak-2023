@@ -4,27 +4,34 @@
 
 namespace {
 
-TokenType getTokenType(const std::string_view &text) {
-    if (text == "(")
-        return ParenthesesBegin;
-    if (text == ")")
-        return ParenthesesEnd;
-    if (text == "{")
-        return BraceBegin;
-    if (text == "}")
-        return BraceEnd;
-    if (text == ",")
-        return Comma;
-    if (text == ";")
-        return Semicolon;
-    if (text == "=" || text == "+" || text == "-" || text == "*" ||
-        text == "/" || text == "?")
-        return BinaryOperator;
+const std::unordered_map<std::string_view, TokenType> tokenMap{
+    {"(", ParenthesesBegin},
+    {")", ParenthesesEnd},
+    {"{", BraceBegin},
+    {"}", BraceEnd},
+    {",", Comma},
+    {";", Semicolon},
+    {"=", BinaryOperator},
+    {"+", BinaryOperator},
+    {"-", BinaryOperator},
+    {"*", BinaryOperator},
+    {"/", BinaryOperator},
+    {"?", BinaryOperator},
 
+    {"let", Let},
+    {"template", Template},
+    {"type", Type},
+    {"fn", Fn},
+};
+
+TokenType getTokenType(const std::string_view &text) {
+    const auto it = tokenMap.find(text);
+    if (it != tokenMap.end()) {
+        return it->second;
+    }
     if (std::regex_match(text.begin(), text.end(), std::regex(R"(\d+)"))) {
         return NumericLiteral;
     }
-
     return Word;
 }
 

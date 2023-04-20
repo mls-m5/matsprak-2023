@@ -6,7 +6,7 @@
 #include <string>
 
 TEST(TokenizerTest, BasicTest) {
-    std::string code = R"(
+    std::string_view code = R"(
         fn main() {
             let x = 10;
             let y = 20;
@@ -14,9 +14,7 @@ TEST(TokenizerTest, BasicTest) {
         }
     )";
 
-    std::stringstream ss(code);
-
-    std::shared_ptr<File> file = std::make_shared<File>(ss);
+    std::shared_ptr<File> file = File::fromString(code, "test.msp");
 
     TokenIterator it = tokenize(file);
 

@@ -9,11 +9,11 @@
 #include <unordered_map>
 #include <vector>
 
-struct Module;
+struct AstModule;
 struct ModuleNode;
 
 struct StringRef {
-    std::string_view get(Module &module);
+    std::string_view get(AstModule &module);
 
     int index = 0;
 };
@@ -22,13 +22,13 @@ struct NodeRef {
     unsigned int ref = 0;
     StringRef text;
 
-    ModuleNode *get(Module &module);
+    ModuleNode *get(AstModule &module);
 };
 
 // Reference that can be used in memory but never saved
 // Saves pointer to the module
 struct TempNodeRef {
-    Module *module;
+    AstModule *module;
     NodeRef ref;
 };
 
@@ -50,7 +50,7 @@ struct ModuleNode {
     NodeRange range;
 };
 
-struct Module {
+struct AstModule {
     Map<std::string, int> words; // Not serialized only used on parsing
 
     std::vector<std::string> wordContainer;
@@ -85,9 +85,9 @@ struct Module {
 
 // Keep track of all modules open in the current session
 struct ModuleRegister {
-    Map<std::string_view, Module> modules{};
+    Map<std::string_view, AstModule> modules{};
 
-    Module *get(std::string_view name) {
+    AstModule *get(std::string_view name) {
         if (auto it = modules.find(name); it != modules.end()) {
             return &it->second;
         }

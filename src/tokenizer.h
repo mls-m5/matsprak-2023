@@ -13,10 +13,13 @@ enum TokenType {
     Comma,
     Semicolon,
     BinaryOperator,
+    Let,
+    Template,
+    Type,
+    Fn,
 };
 
 struct Token {
-    //    std::shared_ptr<File> _file;
     std::string _text;
     TokenType _type;
 
@@ -33,6 +36,9 @@ struct TokenIterator {
     std::vector<Token>::iterator _end;
 
     TokenIterator(std::shared_ptr<TokenizedFile> file);
+
+    TokenIterator(const TokenIterator &) = delete;
+    TokenIterator(TokenIterator &&) = default;
 
     const Token &operator()() {
         return *current();
@@ -59,11 +65,11 @@ struct TokenIterator {
         return *this;
     }
 
-    TokenIterator operator++(int) {
-        TokenIterator tmp(*this);
-        operator++();
-        return tmp;
-    }
+    //    TokenIterator operator++(int) {
+    //        TokenIterator tmp(*this);
+    //        operator++();
+    //        return tmp;
+    //    }
 
     // Add more functions if needed
 };

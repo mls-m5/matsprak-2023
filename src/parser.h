@@ -1,10 +1,11 @@
 #pragma once
 
+#include "tokenizer.h"
 #include <istream>
 #include <memory>
 #include <string_view>
 
-struct Module;
+struct AstModule;
 struct File;
 
-void parse(Module &, std::istream &in);
+void parse(AstModule &, std::shared_ptr<File> file);
