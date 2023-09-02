@@ -1,32 +1,7 @@
 #pragma once
 
 #include "file.h"
-#include <string_view>
-
-enum TokenType {
-    ParenthesesBegin,
-    ParenthesesEnd,
-    Word,
-    NumericLiteral,
-    BraceBegin,
-    BraceEnd,
-    Comma,
-    Semicolon,
-    BinaryOperator,
-    Let,
-    Template,
-    Type,
-    Fn,
-};
-
-struct Token {
-    std::string _text;
-    TokenType _type;
-
-    std::string_view text() const {
-        return _text;
-    }
-};
+#include "token.h"
 
 struct TokenizedFile;
 
@@ -37,7 +12,7 @@ struct TokenIterator {
 
     TokenIterator(std::shared_ptr<TokenizedFile> file);
 
-    TokenIterator(const TokenIterator &) = delete;
+    TokenIterator(const TokenIterator &) = default;
     TokenIterator(TokenIterator &&) = default;
 
     const Token &operator()() {
@@ -64,12 +39,6 @@ struct TokenIterator {
         }
         return *this;
     }
-
-    //    TokenIterator operator++(int) {
-    //        TokenIterator tmp(*this);
-    //        operator++();
-    //        return tmp;
-    //    }
 
     // Add more functions if needed
 };

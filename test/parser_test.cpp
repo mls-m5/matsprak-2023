@@ -1,13 +1,17 @@
 
 #include "astmodule.h"
+#include "file.h"
 #include "parser.h"
 #include <filesystem>
 #include <gtest/gtest.h>
 #include <sstream>
 #include <string>
 
-TEST(TokenizerTest, BasicTest) {
-    std::string_view code = R"(
+TEST(ParserTest, BasicTest) {
+    std::string code = R"(
+        module main;
+        import apa;
+
         fn main() {
             let x = 10;
             let y = 20;
@@ -15,27 +19,9 @@ TEST(TokenizerTest, BasicTest) {
         }
     )";
 
-    std::shared_ptr<File> file = File::fromString(code, "test.msp");
+    std::shared_ptr<File> file = File::from_string(code, "test.msp");
 
     AstModule module;
 
     parse(module, file);
-
-    //    std::vector<std::string> expected = {
-    //        "fn", "main", "(", ")",   "{",   "let", "x", "=", "10", ";",
-    //        "let", "y",
-    //        "=",  "20",   ";", "let", "sum", "=",   "x", "+", "y",  ";", "}"};
-
-    //    for (const auto &expected_token : expected) {
-    //        ASSERT_TRUE(it.current() != nullptr);
-    //        EXPECT_EQ(expected_token, it.current()->text());
-    //        ++it;
-    //    }
-
-    //    ASSERT_EQ(nullptr, it.current());
-}
-
-int main(int argc, char **argv) {
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
 }

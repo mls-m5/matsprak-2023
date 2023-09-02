@@ -6,17 +6,26 @@
 #include <string>
 
 TEST(TokenizerTest, BasicTest) {
-    std::string_view code = R"(
-        fn main() {
-            let x = 10;
-            let y = 20;
-            let sum = x + y;
-        }
-    )";
+    std::string code = R"(
+         fn main() {
+             let x = 10;
+             let y = 20;
+             let sum = x + y;
+         }
+     )";
 
-    std::shared_ptr<File> file = File::fromString(code, "test.msp");
+    std::shared_ptr<File> file = File::from_string(std::move(code), "test.msp");
 
     TokenIterator it = tokenize(file);
+
+    auto it2 = it;
+
+    {
+        Token *token = nullptr;
+        for (auto it2 = it; (token = it2.current()); ++it2) {
+            std::cerr << token->text() << "\n";
+        }
+    }
 
     std::vector<std::string> expected = {
         "fn", "main", "(", ")",   "{",   "let", "x", "=", "10", ";", "let", "y",
@@ -29,9 +38,4 @@ TEST(TokenizerTest, BasicTest) {
     }
 
     ASSERT_EQ(nullptr, it.current());
-}
-
-int main(int argc, char **argv) {
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
 }

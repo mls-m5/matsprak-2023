@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.23)
 project(matsprak-2023)
 
+enable_testing()
+
 add_library(
     matsprak_lib
     STATIC

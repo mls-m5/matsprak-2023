@@ -8,9 +8,13 @@ export struct Array {
 export struct Ship {
     x: float;
     y: float;
+
+    fn move (int x, int y, -> res1, -> res2) {
+
+    }
 }
 
-fn main() {
+fn main() -> (res1: int, res2: int) {
     let x = new(Array(int, 10));
 
     let s = new(Ship(
@@ -21,4 +25,6 @@ fn main() {
     let a = new(Array(Ship, 20, {}))
 
     print(sys.args(1));
+
+    let (x, y) = ship.move(10, 20);
 }

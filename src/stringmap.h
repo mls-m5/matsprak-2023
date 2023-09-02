@@ -29,22 +29,3 @@ struct string_hash {
 
 template <typename Key, typename Value>
 using Map = std::unordered_map<Key, Value, string_hash, std::equal_to<>>;
-
-// int mainbajs() {
-//     // simple comparison demo
-//     std::unordered_map<int, char> example = {{1, 'a'}, {2, 'b'}};
-
-//    if (auto search = example.find(2); search != example.end())
-//        std::cout << "Found " << search->first << " " << search->second <<
-//        '\n';
-//    else
-//        std::cout << "Not found\n";
-
-//    // C++20 demo: Heterogeneous lookup for unordered containers (transparent
-//    // hashing)
-//    std::unordered_map<std::string, size_t, string_hash, std::equal_to<>> map{
-//        {"one"s, 1}};
-//    std::cout << std::boolalpha << (map.find("one") != map.end()) << '\n'
-//              << (map.find("one"s) != map.end()) << '\n'
-//              << (map.find("one"sv) != map.end()) << '\n';
-//}
