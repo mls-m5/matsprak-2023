@@ -31,12 +31,61 @@ struct TokenTreeLookup {
         friend TokenTreeLookup;
     };
 
+    // TokenTreeLookup constructor
     TokenTreeLookup() {
+        // Keywords
         root.add("let", Let);
         root.add("fn", Fn);
-        root.add("++", UnaryOperator);
+        root.add("template", Template);
+        root.add("type", Type);
+
+        // Single-character Operators
+        root.add("+", Plus);
+        root.add("-", Minus);
+        root.add("*", Multiply);
+        root.add("/", Divide);
+        root.add("%", Modulo);
+        root.add("&", And);
+        root.add("|", Or);
+        root.add("^", Xor);
+        root.add("!", Not);
+        root.add("~", Tilde);
+        root.add("<", Less);
+        root.add(">", Greater);
+
+        // Multi-character Operators
+        root.add("++", PlusPlus);
+        root.add("--", MinusMinus);
+        root.add("+=", PlusEqual);
+        root.add("-=", MinusEqual);
+        root.add("*=", MulEqual);
+        root.add("/=", DivEqual);
+        root.add("%=", ModEqual);
+        root.add("&=", AndEqual);
+        root.add("|=", OrEqual);
+        root.add("^=", XorEqual);
+        root.add(">>=", RightShiftEqual);
+        root.add("<<=", LeftShiftEqual);
+        root.add("==", EqualEqual);
+        root.add("!=", NotEqual);
+        root.add("<=", LessOrEqual);
+        root.add(">=", GreaterOrEqual);
+        root.add("&&", LogicalAnd);
+        root.add("||", LogicalOr);
+        root.add("<<", LeftShift);
+        root.add(">>", RightShift);
+        root.add("->", Arrow);
+        root.add("->*", ArrowStar);
+        root.add("::", ScopeResolution);
+        root.add(".*", DotStar);
+
+        // Punctuation and other symbols
         root.add("(", ParenthesesBegin);
         root.add(")", ParenthesesEnd);
+        root.add("{", BraceBegin);
+        root.add("}", BraceEnd);
+        root.add(",", Comma);
+        root.add(";", Semicolon);
     }
 
     TokenTreeLookup(const TokenTreeLookup &) = delete;
@@ -55,8 +104,8 @@ struct TokenTreeLookup {
         return std::exchange(current, &root)->type;
     }
 
-    /// Return value without pushing another character, for example on end of
-    /// word
+    /// Return value without pushing another character, for example on end
+    /// of word
     TokenType get() {
         return std::exchange(current, &root)->type;
     }

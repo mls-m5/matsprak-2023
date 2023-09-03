@@ -8,37 +8,6 @@
 
 namespace {
 
-const std::unordered_map<std::string_view, TokenType> tokenMap{
-    {"(", ParenthesesBegin},
-    {")", ParenthesesEnd},
-    {"{", BraceBegin},
-    {"}", BraceEnd},
-    {",", Comma},
-    {";", Semicolon},
-    {"=", BinaryOperator},
-    {"+", BinaryOperator},
-    {"-", BinaryOperator},
-    {"*", BinaryOperator},
-    {"/", BinaryOperator},
-    {"?", BinaryOperator},
-
-    {"let", Let},
-    {"template", Template},
-    {"type", Type},
-    {"fn", Fn},
-};
-
-TokenType getTokenType(const std::string_view &text) {
-    const auto it = tokenMap.find(text);
-    if (it != tokenMap.end()) {
-        return it->second;
-    }
-    if (std::regex_match(text.begin(), text.end(), std::regex(R"(\d+)"))) {
-        return NumericLiteral;
-    }
-    return Word;
-}
-
 void tokenizeLine(std::string_view line,
                   std::vector<Token> &tokens,
                   const std::shared_ptr<File> &file) {
@@ -128,20 +97,8 @@ void tokenizeLine(std::string_view line,
         auto c = line.at(i);
         auto charType = getType(c);
 
-        //        if (charType == Operator) {
-        //            if (auto type = t.peek(c); !type) {
-        //                t.push(c);
-        //                finishToken();
-        //            }
-        //        }
-        //            if (auto otype = t.peek(c)) {
-        //                auto type = *otype;
-
-        //            }
-        //        }
-        //        else
-
-        if (charType != prevType) {
+        if (charType != prevType &&
+            !(charType == Numeric && prevType == Alphabetic)) {
             finishToken();
             prevType = charType;
         }
