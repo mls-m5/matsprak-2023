@@ -3,6 +3,12 @@
 #include <string>
 #include <string_view>
 
+enum TokenCategory {
+    KeyWord,
+    BinaryOperator,
+    UnaryOperator,
+};
+
 enum TokenType {
     Invalid, // Use only as default value
     ParenthesesBegin,
@@ -13,11 +19,15 @@ enum TokenType {
     BraceEnd,
     Comma,
     Semicolon,
-    BinaryOperator,
     Let,
     Template,
     Type,
     Fn,
+};
+
+struct TypePair {
+    TokenCategory cat;
+    TokenType
 };
 
 struct Token {
