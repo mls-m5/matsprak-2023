@@ -92,7 +92,8 @@ public:
 
     AstTreeLookup() {
         using VecT = std::vector<DoubleTypeT>;
-        add(Ast::LetStatement, VecT{Let, Word, Semicolon});
+        add(Ast::LetStatement,
+            VecT{Let, Word, Equals, NumericLiteral, Semicolon});
     }
 
     Node root;

@@ -33,6 +33,7 @@ enum TokenType {
     Xor,      // ^
     Not,      // !
     Tilde,    // ~
+    Equals,   // =
 
     // Unary operators
     PlusPlus,   // ++
@@ -110,6 +111,7 @@ constexpr Ast category(TokenType type) {
     case Xor:
     case Not:
     case Tilde:
+    case Equals:
         return Ast::BasicOperator;
 
     case PlusEqual:
@@ -234,6 +236,8 @@ inline std::string_view toString(TokenType t) {
         return "Not";
     case Tilde:
         return "Tilde";
+    case Equals:
+        return "Equals";
 
     case PlusPlus:
         return "PlusPlus";
@@ -294,8 +298,6 @@ inline std::string_view toString(TokenType t) {
 
     case DotStar:
         return "DotStar";
-
-    default:
-        throw std::runtime_error{"Invalid TokenType"};
     }
+    throw std::runtime_error{"Invalid TokenType"};
 }

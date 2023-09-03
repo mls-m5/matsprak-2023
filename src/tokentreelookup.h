@@ -52,6 +52,7 @@ struct TokenTreeLookup {
         root.add("~", Tilde);
         root.add("<", Less);
         root.add(">", Greater);
+        root.add("=", Equals);
 
         // Multi-character Operators
         root.add("++", PlusPlus);

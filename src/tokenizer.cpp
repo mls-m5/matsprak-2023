@@ -76,6 +76,7 @@ void tokenizeLine(std::string_view line,
 
     auto prevType = Space;
     auto charType = Space;
+    auto firstType = Space;
 
     auto finishToken = [&](/*char c*/) {
         if (current.empty()) {
@@ -84,18 +85,25 @@ void tokenizeLine(std::string_view line,
 
         auto type = t.get();
         if (type == Invalid) {
-            tokens.emplace_back(current, Word);
+            type = Word;
+            if (firstType == Numeric) {
+                // TODO: Fix when names ends with digits
+                type = NumericLiteral;
+            }
         }
-        else {
-            tokens.emplace_back(current, type);
-        }
+        tokens.emplace_back(current, type);
         current = {};
         t.reset();
+        firstType = Space;
     };
 
     for (size_t i = 0; i < line.size(); ++i) {
         auto c = line.at(i);
         auto charType = getType(c);
+
+        if (firstType == Space) {
+            firstType = charType;
+        }
 
         if (charType != prevType &&
             !(charType == Numeric && prevType == Alphabetic)) {

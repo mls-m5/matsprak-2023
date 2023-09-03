@@ -15,7 +15,7 @@
 
 TEST(ParserTest, BasicTest) {
     std::string code = R"(
-        let x;
+        let x = 10;
     )";
 
     std::shared_ptr<File> file = File::from_string(code, "test.msp");
@@ -27,7 +27,7 @@ TEST(ParserTest, BasicTest) {
     for (; it.current(); ++it) {
         std::cout << std::setw(10) << std::left << it.current()->text();
 
-        std::cout << std::setw(10) << std::left
+        std::cout << std::setw(20) << std::left
                   << toString(it.current()->type());
 
         auto t = state.push(it.current()->type());
