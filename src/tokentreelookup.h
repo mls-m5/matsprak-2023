@@ -34,8 +34,9 @@ struct TokenTreeLookup {
     TokenTreeLookup() {
         root.add("let", Let);
         root.add("fn", Fn);
-        //        root.add("template", Template);
-        //        root.add("type", Type);
+        root.add("++", UnaryOperator);
+        root.add("(", ParenthesesBegin);
+        root.add(")", ParenthesesEnd);
     }
 
     TokenTreeLookup(const TokenTreeLookup &) = delete;
@@ -63,9 +64,7 @@ struct TokenTreeLookup {
     /// Check the current type without consuming it
     std::optional<TokenType> peek(char c) {
         if (auto f = current->find(c)) {
-            if (f->type != Invalid) {
-                return f->type;
-            }
+            return f->type;
         }
         return std::nullopt;
     }

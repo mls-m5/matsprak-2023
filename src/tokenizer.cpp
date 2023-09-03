@@ -52,6 +52,7 @@ void tokenizeLine(std::string_view line,
         Numeric,
         Operator,
         Space,
+        Semicolon,
     };
 
     auto getType = [](char c) {
@@ -73,6 +74,17 @@ void tokenizeLine(std::string_view line,
         case '/':
         case '<':
         case '>':
+        case '=':
+        case '!':
+        case '&':
+        case '|':
+        case '^':
+        case '%':
+        case '~':
+        case '?':
+        case ':':
+        case '.':
+        case ',':
         case '(':
         case ')':
         case '{':
@@ -85,6 +97,9 @@ void tokenizeLine(std::string_view line,
         case '\t':
         case '\r':
             return Space;
+
+        case ';':
+            return Semicolon;
         default:
             return Alphabetic;
         }
@@ -93,7 +108,7 @@ void tokenizeLine(std::string_view line,
     auto prevType = Space;
     auto charType = Space;
 
-    auto finishToken = [&](char c) {
+    auto finishToken = [&](/*char c*/) {
         if (current.empty()) {
             return;
         }
@@ -107,7 +122,6 @@ void tokenizeLine(std::string_view line,
         }
         current = {};
         t.reset();
-        prevType = charType;
     };
 
     for (size_t i = 0; i < line.size(); ++i) {
@@ -115,18 +129,29 @@ void tokenizeLine(std::string_view line,
         auto charType = getType(c);
 
         //        if (charType == Operator) {
+        //            if (auto type = t.peek(c); !type) {
+        //                t.push(c);
+        //                finishToken();
+        //            }
+        //        }
         //            if (auto otype = t.peek(c)) {
         //                auto type = *otype;
 
         //            }
         //        }
         //        else
+
         if (charType != prevType) {
-            finishToken(c);
+            finishToken();
             prevType = charType;
         }
 
-        t.push(c);
+        auto type = t.push(c);
+
+        if (charType == Operator && type != Invalid) {
+            finishToken();
+        }
+
         if (charType != Space) {
             if (current.empty()) {
                 current = std::string_view{line}.substr(i, 1);
@@ -137,7 +162,9 @@ void tokenizeLine(std::string_view line,
         }
     }
 
-    finishToken(' ');
+    charType = Space;
+
+    finishToken();
 }
 
 } // anonymous namespace
