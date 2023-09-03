@@ -1,7 +1,9 @@
 
+#include "token.h"
 #include "tokenizer.h" // Include your tokenizer header file here
 #include <filesystem>
 #include <gtest/gtest.h>
+#include <iomanip>
 #include <sstream>
 #include <string>
 
@@ -19,7 +21,8 @@ TEST(TokenizerTest, SingleDoubleCharacterOperator) {
     {
         Token *token = nullptr;
         for (auto it2 = it; (token = it2.current()); ++it2) {
-            std::cerr << token->text() << "\n";
+            std::cerr << std::setw(10) << std::left << token->text()
+                      << toString(token->type()) << "\n";
         }
     }
 
@@ -52,7 +55,8 @@ TEST(TokenizerTest, BasicTest) {
     {
         Token *token = nullptr;
         for (auto it2 = it; (token = it2.current()); ++it2) {
-            std::cerr << token->text() << "\n";
+            std::cerr << std::setw(10) << std::left << token->text()
+                      << toString(token->type()) << "\n";
         }
     }
 
@@ -87,7 +91,8 @@ TEST(TokenizerTest, OperatorTest) {
     {
         Token *token = nullptr;
         for (auto it2 = it; (token = it2.current()); ++it2) {
-            std::cerr << token->text() << "\n";
+            std::cerr << std::setw(10) << std::left << token->text()
+                      << toString(token->type()) << "\n";
         }
     }
 

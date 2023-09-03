@@ -119,8 +119,6 @@ void tokenizeLine(std::string_view line,
         }
     }
 
-    charType = Space;
-
     finishToken();
 }
 

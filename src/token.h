@@ -1,24 +1,10 @@
 #pragma once
 
+#include "ast.h"
 #include <string>
 #include <string_view>
 
 #include <stdexcept>
-
-enum TokenCategory {
-    Uncategorized,
-    KeyWord,
-    UnaryOperator,
-    BasicOperator,
-    BinaryOperator,
-    RelationalOperator,
-    LogicalOperator,
-    BitwiseShiftOperator,
-    MemberAccessOperator,
-    ScopeOperator,
-    PointerToMemberOperator,
-    Punctuation
-};
 
 enum TokenType {
     // Uncategorized
@@ -91,7 +77,7 @@ enum TokenType {
     DotStar // .*
 };
 
-constexpr TokenCategory category(TokenType type) {
+constexpr Ast category(TokenType type) {
     switch (type) {
     case Invalid:
     case ParenthesesBegin:
@@ -102,17 +88,17 @@ constexpr TokenCategory category(TokenType type) {
     case BraceEnd:
     case Comma:
     case Semicolon:
-        return Uncategorized;
+        return Ast::Uncategorized;
 
     case Let:
     case Template:
     case Type:
     case Fn:
-        return KeyWord;
+        return Ast::KeyWord;
 
     case PlusPlus:
     case MinusMinus:
-        return UnaryOperator;
+        return Ast::UnaryOperator;
 
     case Plus:
     case Minus:
@@ -124,7 +110,7 @@ constexpr TokenCategory category(TokenType type) {
     case Xor:
     case Not:
     case Tilde:
-        return BasicOperator;
+        return Ast::BasicOperator;
 
     case PlusEqual:
     case MinusEqual:
@@ -136,7 +122,7 @@ constexpr TokenCategory category(TokenType type) {
     case XorEqual:
     case RightShiftEqual:
     case LeftShiftEqual:
-        return BinaryOperator;
+        return Ast::BinaryOperator;
 
     case EqualEqual:
     case NotEqual:
@@ -144,25 +130,25 @@ constexpr TokenCategory category(TokenType type) {
     case Greater:
     case LessOrEqual:
     case GreaterOrEqual:
-        return RelationalOperator;
+        return Ast::RelationalOperator;
 
     case LogicalAnd:
     case LogicalOr:
-        return LogicalOperator;
+        return Ast::LogicalOperator;
 
     case LeftShift:
     case RightShift:
-        return BitwiseShiftOperator;
+        return Ast::BitwiseShiftOperator;
 
     case Arrow:
     case ArrowStar:
-        return MemberAccessOperator;
+        return Ast::MemberAccessOperator;
 
     case ScopeResolution:
-        return ScopeOperator;
+        return Ast::ScopeOperator;
 
     case DotStar:
-        return PointerToMemberOperator;
+        return Ast::PointerToMemberOperator;
     }
 
     throw std::invalid_argument("Invalid TokenType");
@@ -187,7 +173,129 @@ struct Token {
         return _type;
     }
 
+    Ast astType() const {
+        return _astType;
+    }
+
 private:
     std::string_view _text;
     TokenType _type;
+    Ast _astType = Ast::Uncategorized;
+    Token *next = nullptr;
+    Token *children = nullptr;
 };
+
+inline std::string_view toString(TokenType t) {
+    switch (t) {
+    case Invalid:
+        return "Invalid";
+    case ParenthesesBegin:
+        return "ParenthesesBegin";
+    case ParenthesesEnd:
+        return "ParenthesesEnd";
+    case Word:
+        return "Word";
+    case NumericLiteral:
+        return "NumericLiteral";
+    case BraceBegin:
+        return "BraceBegin";
+    case BraceEnd:
+        return "BraceEnd";
+    case Comma:
+        return "Comma";
+    case Semicolon:
+        return "Semicolon";
+    case Let:
+        return "Let";
+    case Template:
+        return "Template";
+    case Type:
+        return "Type";
+    case Fn:
+        return "Fn";
+
+    case Plus:
+        return "Plus";
+    case Minus:
+        return "Minus";
+    case Multiply:
+        return "Multiply";
+    case Divide:
+        return "Divide";
+    case Modulo:
+        return "Modulo";
+    case And:
+        return "And";
+    case Or:
+        return "Or";
+    case Xor:
+        return "Xor";
+    case Not:
+        return "Not";
+    case Tilde:
+        return "Tilde";
+
+    case PlusPlus:
+        return "PlusPlus";
+    case MinusMinus:
+        return "MinusMinus";
+
+    case PlusEqual:
+        return "PlusEqual";
+    case MinusEqual:
+        return "MinusEqual";
+    case MulEqual:
+        return "MulEqual";
+    case DivEqual:
+        return "DivEqual";
+    case ModEqual:
+        return "ModEqual";
+    case AndEqual:
+        return "AndEqual";
+    case OrEqual:
+        return "OrEqual";
+    case XorEqual:
+        return "XorEqual";
+    case RightShiftEqual:
+        return "RightShiftEqual";
+    case LeftShiftEqual:
+        return "LeftShiftEqual";
+
+    case EqualEqual:
+        return "EqualEqual";
+    case NotEqual:
+        return "NotEqual";
+    case Less:
+        return "Less";
+    case Greater:
+        return "Greater";
+    case LessOrEqual:
+        return "LessOrEqual";
+    case GreaterOrEqual:
+        return "GreaterOrEqual";
+
+    case LogicalAnd:
+        return "LogicalAnd";
+    case LogicalOr:
+        return "LogicalOr";
+
+    case LeftShift:
+        return "LeftShift";
+    case RightShift:
+        return "RightShift";
+
+    case Arrow:
+        return "Arrow";
+    case ArrowStar:
+        return "ArrowStar";
+
+    case ScopeResolution:
+        return "ScopeResolution";
+
+    case DotStar:
+        return "DotStar";
+
+    default:
+        throw std::runtime_error{"Invalid TokenType"};
+    }
+}
