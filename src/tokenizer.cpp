@@ -132,19 +132,15 @@ void tokenizeLine(std::string_view line,
 
 } // anonymous namespace
 
-struct TokenizedFile {
-    std::shared_ptr<File> file;
-    std::vector<Token> tokens;
-};
-
-TokenIterator tokenize(const std::shared_ptr<File> &file) {
+std::shared_ptr<TokenizedFile> tokenize(const std::shared_ptr<File> &file) {
     auto tokenizedFile = std::make_shared<TokenizedFile>(file);
 
     for (const auto &line : file->lines) {
         tokenizeLine(line, tokenizedFile->tokens, file);
     }
 
-    return TokenIterator(tokenizedFile);
+    //    return TokenIterator(tokenizedFile);
+    return tokenizedFile;
 }
 
 TokenIterator::TokenIterator(std::shared_ptr<TokenizedFile> file)

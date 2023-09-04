@@ -7,4 +7,4 @@
 struct AstModule;
 struct File;
 
-void parse(AstModule &, std::shared_ptr<File> file);
+// void parse(AstModule &, std::shared_ptr<File> file);

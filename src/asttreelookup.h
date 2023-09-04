@@ -2,6 +2,7 @@
 
 #include "ast.h"
 #include "token.h"
+#include "tokenizer.h"
 #include <array>
 #include <cstddef>
 #include <map>
@@ -12,46 +13,29 @@
 #include <variant>
 #include <vector>
 
-using DoubleTypeT = std::variant<nullptr_t, Ast, TokenType>;
-
-constexpr std::string_view toString(DoubleTypeT t) {
-    switch (t.index()) {
-    case 1:
-        return toString(std::get<1>(t));
-    case 2:
-        return toString(std::get<2>(t));
-    }
-    throw std::runtime_error{"unsupported to string"};
-}
-
 struct Matcher {
-    Matcher(DoubleTypeT t)
-        : type{t} {}
-
-    Matcher(Ast t)
-        : type{t} {}
     Matcher(TokenType t)
         : type{t} {}
 
-    bool operator()(DoubleTypeT t) const {
+    bool operator()(TokenType t) const {
         return t == type;
     }
 
-    DoubleTypeT type = Ast::Uncategorized;
+    TokenType type = Uncategorized;
 };
 
 class AstTreeLookup {
 public:
     struct Node {
-        DoubleTypeT type = Ast::Uncategorized;
+        TokenType type = Uncategorized;
 
         bool hasType() const {
-            return type != DoubleTypeT{Ast::Uncategorized};
+            return type != TokenType{Uncategorized};
         }
 
         std::vector<std::pair<Matcher, Node>> children;
 
-        const Node *find(DoubleTypeT t) const {
+        const Node *find(TokenType t) const {
             for (auto &c : children) {
                 if (c.first(t)) {
                     return &c.second;
@@ -60,7 +44,7 @@ public:
             return nullptr;
         }
 
-        Node *find(DoubleTypeT t) {
+        Node *find(TokenType t) {
             for (auto &c : children) {
                 if (c.first(t)) {
                     return &c.second;
@@ -69,7 +53,7 @@ public:
             return nullptr;
         }
 
-        Node &findOrCreate(DoubleTypeT t) {
+        Node &findOrCreate(TokenType t) {
             if (auto f = find(t)) {
                 return *f;
             }
@@ -80,7 +64,7 @@ public:
         friend AstTreeLookup;
 
     private:
-        void add(DoubleTypeT type, std::vector<DoubleTypeT> key) {
+        void add(TokenType type, std::vector<TokenType> key) {
             if (key.empty()) {
                 this->type = type;
                 return;
@@ -91,24 +75,22 @@ public:
     };
 
     AstTreeLookup() {
-        using VecT = std::vector<DoubleTypeT>;
-        add(Ast::LetStatement,
-            VecT{Let, Word, Equals, NumericLiteral, Semicolon});
-        add(Ast::AssignmentExpression,
-            VecT{Ast::Expression, Equals, Ast::Expression, Semicolon});
+        using VecT = std::vector<TokenType>;
+        add(LetStatement, VecT{Let, Word, Equals, NumericLiteral, Semicolon});
+        add(AssignmentExpression,
+            VecT{Expression, Equals, Expression, Semicolon});
     }
 
     Node root;
 
 private:
-    void add(Ast resT, std::vector<DoubleTypeT> arr) {
+    void add(TokenType resT, std::vector<TokenType> arr) {
         root.add(resT, arr);
     }
 };
 
 class AstTreeState {
 public:
-    //    const AstTreeLookup *lookup = nullptr;
     AstTreeLookup::Node *root = nullptr;
     AstTreeLookup::Node *current = nullptr;
 
@@ -116,10 +98,11 @@ public:
         : root{&l.root}
         , current{&l.root} {}
 
-    AstTreeLookup::Node *push(DoubleTypeT t) {
+    AstTreeLookup::Node *push(TokenType t) {
         if (auto f = current->find(t)) {
             current = f;
             if (f->hasType()) {
+                current = root;
                 return f;
             }
         }
@@ -127,3 +110,11 @@ public:
         return nullptr;
     }
 };
+
+void group(AstTreeState &state, std::shared_ptr<TokenizedFile> tokens) {
+    for (auto it = TokenIterator{tokens}; it.current(); ++it) {
+        if (auto t = state.push(it.current()->type())) {
+            it.current()->type(t->type);
+        }
+    }
+}

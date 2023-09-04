@@ -4,20 +4,20 @@
 #include "tokenizer.h"
 #include <memory>
 
-namespace {
+// namespace {
 
-struct Parser {
-    AstModule &mod;
+// struct Parser {
+//     AstModule &mod;
 
-    void parseRoot(TokenIterator &it) {}
-};
+//    void parseRoot(TokenIterator &it) {}
+//};
 
-} // namespace
+//} // namespace
 
-void parse(AstModule &mod, std::shared_ptr<File> file) {
-    auto parser = Parser{mod};
+// void parse(AstModule &mod, std::shared_ptr<File> file) {
+//     auto parser = Parser{mod};
 
-    auto it = tokenize(file);
+//    auto it = tokenize(file);
 
-    parser.parseRoot(it);
-}
+//    parser.parseRoot(it);
+//}

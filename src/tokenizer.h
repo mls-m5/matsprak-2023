@@ -3,7 +3,10 @@
 #include "file.h"
 #include "token.h"
 
-struct TokenizedFile;
+struct TokenizedFile {
+    std::shared_ptr<File> file;
+    std::vector<Token> tokens;
+};
 
 struct TokenIterator {
     std::shared_ptr<TokenizedFile> _file;
@@ -43,4 +46,4 @@ struct TokenIterator {
     // Add more functions if needed
 };
 
-TokenIterator tokenize(const std::shared_ptr<File> &file);
+std::shared_ptr<TokenizedFile> tokenize(const std::shared_ptr<File> &file);

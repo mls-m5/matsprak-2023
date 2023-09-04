@@ -16,10 +16,12 @@
 TEST(ParserTest, BasicTest) {
     std::string code = R"(
         let x = 10;
+        x = 30;
     )";
 
     std::shared_ptr<File> file = File::from_string(code, "test.msp");
-    auto it = tokenize(file);
+    auto tokens = tokenize(file);
+    auto it = TokenIterator{tokens};
 
     auto tree = AstTreeLookup{};
     auto state = AstTreeState{tree};

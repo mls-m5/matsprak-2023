@@ -6,6 +6,7 @@
 
 #include <stdexcept>
 
+#if 0
 enum TokenType {
     // Uncategorized
     Invalid,
@@ -76,6 +77,11 @@ enum TokenType {
 
     // Pointer to member
     DotStar // .*
+
+
+    // Ast types --------------------------
+
+
 };
 
 constexpr Ast category(TokenType type) {
@@ -155,6 +161,123 @@ constexpr Ast category(TokenType type) {
 
     throw std::invalid_argument("Invalid TokenType");
 }
+#endif
+
+#define TOKEN_TYPE_LIST(X)                                                     \
+    /* Uncategorized */                                                        \
+    X(Invalid, Uncategorized)                                                  \
+    X(ParenthesesBegin, BeginGroup)                                            \
+    X(ParenthesesEnd, EndGroup)                                                \
+    X(Word, Expression)                                                        \
+    X(NumericLiteral, Expression)                                              \
+    X(BraceBegin, Uncategorized)                                               \
+    X(BraceEnd, Uncategorized)                                                 \
+    X(Comma, Uncategorized)                                                    \
+    X(Semicolon, Uncategorized)                                                \
+    /* KeyWords */                                                             \
+    X(Let, KeyWord)                                                            \
+    X(Template, KeyWord)                                                       \
+    X(Type, KeyWord)                                                           \
+    X(Fn, KeyWord)                                                             \
+    /* Unary and basic operators */                                            \
+    X(Plus, BasicOperator)     /* + */                                         \
+    X(Minus, BasicOperator)    /* - */                                         \
+    X(Multiply, BasicOperator) /* * */                                         \
+    X(Divide, BasicOperator)   /* / */                                         \
+    X(Modulo, BasicOperator)   /* % */                                         \
+    X(And, BasicOperator)      /* & */                                         \
+    X(Or, BasicOperator)       /* | */                                         \
+    X(Xor, BasicOperator)      /* ^ */                                         \
+    X(Not, BasicOperator)      /* ! */                                         \
+    X(Tilde, BasicOperator)    /* ~ */                                         \
+    X(Equals, BasicOperator)   /* = */                                         \
+    /* Unary operators */                                                      \
+    X(PlusPlus, UnaryOperator)   /* ++ */                                      \
+    X(MinusMinus, UnaryOperator) /* -- */                                      \
+    /* Assignment operators */                                                 \
+    X(PlusEqual, BinaryOperator)       /* += */                                \
+    X(MinusEqual, BinaryOperator)      /* -= */                                \
+    X(MulEqual, BinaryOperator)        /* *= */                                \
+    X(DivEqual, BinaryOperator)        /* /= */                                \
+    X(ModEqual, BinaryOperator)        /* %= */                                \
+    X(AndEqual, BinaryOperator)        /* &= */                                \
+    X(OrEqual, BinaryOperator)         /* |= */                                \
+    X(XorEqual, BinaryOperator)        /* ^= */                                \
+    X(RightShiftEqual, BinaryOperator) /* >>= */                               \
+    X(LeftShiftEqual, BinaryOperator)  /* <<= */                               \
+    /* Relational operators */                                                 \
+    X(EqualEqual, RelationalOperator)     /* == */                             \
+    X(NotEqual, RelationalOperator)       /* != */                             \
+    X(Less, RelationalOperator)           /* < */                              \
+    X(Greater, RelationalOperator)        /* > */                              \
+    X(LessOrEqual, RelationalOperator)    /* <= */                             \
+    X(GreaterOrEqual, RelationalOperator) /* >= */                             \
+    /* Logical operators */                                                    \
+    X(LogicalAnd, LogicalOperator) /* && */                                    \
+    X(LogicalOr, LogicalOperator)  /* || */                                    \
+    /* Bitwise shift operators */                                              \
+    X(LeftShift, BitwiseShiftOperator)  /* << */                               \
+    X(RightShift, BitwiseShiftOperator) /* >> */                               \
+    /* Member Access */                                                        \
+    X(Arrow, MemberAccessOperator)     /* -> */                                \
+    X(ArrowStar, MemberAccessOperator) /* ->* */                               \
+    /* Scope resolution */                                                     \
+    X(ScopeResolution, ScopeOperator) /* :: */                                 \
+    /* Pointer to member */                                                    \
+    X(DotStar, PointerToMemberOperator) /* .* */                               \
+    /* Additional Ast Tokens */                                                \
+    X(Uncategorized, Uncategorized)                                            \
+    X(KeyWord, Uncategorized)                                                  \
+    X(UnaryOperator, Uncategorized)                                            \
+    X(BasicOperator, Uncategorized)                                            \
+    X(BinaryOperator, Uncategorized)                                           \
+    X(RelationalOperator, Uncategorized)                                       \
+    X(LogicalOperator, Uncategorized)                                          \
+    X(BitwiseShiftOperator, Uncategorized)                                     \
+    X(MemberAccessOperator, Uncategorized)                                     \
+    X(ScopeOperator, Uncategorized)                                            \
+    X(PointerToMemberOperator, Uncategorized)                                  \
+    X(Punctuation, Uncategorized)                                              \
+    X(LetStatement, Uncategorized)                                             \
+    X(BeginGroup, Uncategorized)                                               \
+    X(EndGroup, Uncategorized)                                                 \
+    X(AssignmentExpression, Uncategorized)                                     \
+    X(Expression, Uncategorized)                                               \
+    X(Statement, Uncategorized)                                                \
+    X(Count, Uncategorized) // This should always be the last item
+
+// Generate enum
+enum TokenType {
+#define ENUM_ITEM(name, ast_type) name,
+    TOKEN_TYPE_LIST(ENUM_ITEM)
+#undef ENUM_ITEM
+};
+
+// Generate category function
+constexpr TokenType category(TokenType type) {
+    switch (type) {
+#define CASE_ITEM(name, ast_type)                                              \
+    case name:                                                                 \
+        return ast_type;
+        TOKEN_TYPE_LIST(CASE_ITEM)
+#undef CASE_ITEM
+    default:
+        throw std::invalid_argument("Invalid TokenType");
+    }
+}
+
+// Generate toString function
+inline std::string_view toString(TokenType t) {
+    switch (t) {
+#define CASE_ITEM(name, ast_type)                                              \
+    case name:                                                                 \
+        return #name;
+        TOKEN_TYPE_LIST(CASE_ITEM)
+#undef CASE_ITEM
+    default:
+        throw std::runtime_error{"Invalid TokenType"};
+    }
+}
 
 struct Token {
     Token(const Token &) = default;
@@ -175,18 +298,18 @@ struct Token {
         return _type;
     }
 
-    Ast astType() const {
-        return _astType;
+    void type(TokenType t) {
+        _type = t;
     }
 
 private:
     std::string_view _text;
     TokenType _type;
-    Ast _astType = Ast::Uncategorized;
     Token *next = nullptr;
     Token *children = nullptr;
 };
 
+#if 0
 inline std::string_view toString(TokenType t) {
     switch (t) {
     case Invalid:
@@ -301,3 +424,4 @@ inline std::string_view toString(TokenType t) {
     }
     throw std::runtime_error{"Invalid TokenType"};
 }
+#endif
