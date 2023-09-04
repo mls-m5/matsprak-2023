@@ -37,10 +37,6 @@ TEST(ParserTest, BasicTest) {
 
         std::cout << std::endl;
     }
-
-    //    AstModule module;
-
-    //    parse(module, file);
 }
 
 // TEST(ParserTest, BasicTest) {

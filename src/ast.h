@@ -1,71 +1,43 @@
-#pragma once
-
-// enum AstType {
-//     InvalidAst,
-//     LetStatement,
-//     BeginGroup,
-//     EndGroup,
-// };
-
 #include <stdexcept>
 #include <string_view>
 
+// Define the X-Macro list
+#define AST_TYPES(X)                                                           \
+    X(Uncategorized)                                                           \
+    X(KeyWord)                                                                 \
+    X(UnaryOperator)                                                           \
+    X(BasicOperator)                                                           \
+    X(BinaryOperator)                                                          \
+    X(RelationalOperator)                                                      \
+    X(LogicalOperator)                                                         \
+    X(BitwiseShiftOperator)                                                    \
+    X(MemberAccessOperator)                                                    \
+    X(ScopeOperator)                                                           \
+    X(PointerToMemberOperator)                                                 \
+    X(Punctuation)                                                             \
+    X(Let)                                                                     \
+    X(LetStatement)                                                            \
+    X(BeginGroup)                                                              \
+    X(EndGroup)                                                                \
+    X(AssignmentExpression)                                                    \
+    X(Expression)
+
+// Generate the enum class
 enum class Ast {
-    Uncategorized,
-    KeyWord,
-    UnaryOperator,
-    BasicOperator,
-    BinaryOperator,
-    RelationalOperator,
-    LogicalOperator,
-    BitwiseShiftOperator,
-    MemberAccessOperator,
-    ScopeOperator,
-    PointerToMemberOperator,
-    Punctuation,
-
-    Let,
-
-    /// Processed statements
-    LetStatement,
-    BeginGroup,
-    EndGroup,
+#define ENUM_ITEM(name) name,
+    AST_TYPES(ENUM_ITEM)
+#undef ENUM_ITEM
 };
 
+// Generate the toString function
 constexpr std::string_view toString(Ast t) {
     switch (t) {
-    case Ast::Uncategorized:
-        return "Uncategorized";
-    case Ast::KeyWord:
-        return "KeyWord";
-    case Ast::UnaryOperator:
-        return "UnaryOperator";
-    case Ast::BasicOperator:
-        return "BasicOperator";
-    case Ast::BinaryOperator:
-        return "BinaryOperator";
-    case Ast::RelationalOperator:
-        return "RelationalOperator";
-    case Ast::LogicalOperator:
-        return "LogicalOperator";
-    case Ast::BitwiseShiftOperator:
-        return "BitwiseShiftOperator";
-    case Ast::MemberAccessOperator:
-        return "MemberAccessOperator";
-    case Ast::ScopeOperator:
-        return "ScopeOperator";
-    case Ast::PointerToMemberOperator:
-        return "PointerToMemberOperator";
-    case Ast::Punctuation:
-        return "Punctuation";
-    case Ast::Let:
-        return "Let";
-    case Ast::LetStatement:
-        return "LetStatement";
-    case Ast::BeginGroup:
-        return "BeginGroup";
-    case Ast::EndGroup:
-        return "EndGroup";
+#define CASE_ITEM(name)                                                        \
+    case Ast::name:                                                            \
+        return #name;
+        AST_TYPES(CASE_ITEM)
+#undef CASE_ITEM
+    default:
+        throw std::runtime_error{"Invalid ast type"};
     }
-    throw std::runtime_error{"Invalid ast type"};
 }

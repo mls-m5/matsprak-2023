@@ -94,6 +94,8 @@ public:
         using VecT = std::vector<DoubleTypeT>;
         add(Ast::LetStatement,
             VecT{Let, Word, Equals, NumericLiteral, Semicolon});
+        add(Ast::AssignmentExpression,
+            VecT{Ast::Expression, Equals, Ast::Expression, Semicolon});
     }
 
     Node root;
