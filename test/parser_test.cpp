@@ -35,6 +35,11 @@ TEST(ParserTest, BasicTest) {
         auto t = state.push(it.current()->type());
         if (t) {
             std::cout << toString(t->type);
+
+            std::cout << ": ";
+            for (auto res = t; res != nullptr; res = res->parent) {
+                std::cout << toString(res->type) << " ";
+            }
         }
 
         std::cout << std::endl;

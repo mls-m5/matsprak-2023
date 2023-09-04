@@ -14,19 +14,32 @@
 #include <vector>
 
 struct Matcher {
-    Matcher(TokenType t)
-        : type{t} {}
+    Matcher(TokenType t, TokenType result = Uncategorized)
+        : type{t}
+        , result{(result != Uncategorized) ? result : t} {}
 
     bool operator()(TokenType t) const {
-        return t == type;
+        for (; t != Uncategorized; t = category(t)) {
+            if (t == type) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    bool operator==(const Matcher &other) const {
+        return other.type == type && other.result == result;
     }
 
     TokenType type = Uncategorized;
+    TokenType result = Uncategorized;
 };
 
 class AstTreeLookup {
 public:
     struct Node {
+        Node *parent = nullptr;
         TokenType type = Uncategorized;
 
         bool hasType() const {
@@ -53,18 +66,20 @@ public:
             return nullptr;
         }
 
-        Node &findOrCreate(TokenType t) {
-            if (auto f = find(t)) {
-                return *f;
+        Node &findOrCreate(Matcher t) {
+            for (auto &c : children) {
+                if (c.first == t) {
+                    return c.second;
+                }
             }
-            children.push_back({Matcher{t}, Node{}});
+            children.push_back({Matcher{t}, Node{this}});
             return children.back().second;
         }
 
         friend AstTreeLookup;
 
     private:
-        void add(TokenType type, std::vector<TokenType> key) {
+        void add(TokenType type, std::vector<Matcher> key) {
             if (key.empty()) {
                 this->type = type;
                 return;
@@ -75,16 +90,16 @@ public:
     };
 
     AstTreeLookup() {
-        using VecT = std::vector<TokenType>;
+        using VecT = std::vector<Matcher>;
         add(LetStatement, VecT{Let, Word, Equals, NumericLiteral, Semicolon});
         add(AssignmentExpression,
-            VecT{Expression, Equals, Expression, Semicolon});
+            VecT{Expression, {Equals, BinaryOperator}, Expression, Semicolon});
     }
 
     Node root;
 
 private:
-    void add(TokenType resT, std::vector<TokenType> arr) {
+    void add(TokenType resT, std::vector<Matcher> arr) {
         root.add(resT, arr);
     }
 };
