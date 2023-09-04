@@ -37,8 +37,15 @@ TEST(ParserTest, BasicTest) {
             std::cout << toString(t->type);
 
             std::cout << ": ";
+            auto resVec = std::vector<TokenType>{};
             for (auto res = t; res != nullptr; res = res->parent) {
-                std::cout << toString(res->type) << " ";
+                resVec.push_back(res->matcher.result);
+            }
+            resVec.pop_back();
+            std::reverse(resVec.begin(), resVec.end());
+
+            for (auto r : resVec) {
+                std::cout << toString(r) << " ";
             }
         }
 

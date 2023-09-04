@@ -5,6 +5,7 @@
 #include "tokenizer.h"
 #include <array>
 #include <cstddef>
+#include <list>
 #include <map>
 #include <ranges>
 #include <span>
@@ -40,18 +41,25 @@ class AstTreeLookup {
 public:
     struct Node {
         Node *parent = nullptr;
+        Matcher matcher;
+
+        Node(Node *parent, Matcher matcher)
+            : parent{parent}
+            , matcher{matcher} {}
+
         TokenType type = Uncategorized;
 
         bool hasType() const {
             return type != TokenType{Uncategorized};
         }
 
-        std::vector<std::pair<Matcher, Node>> children;
+        /// List since we want to preserve the elements location in memory
+        std::list<Node> children;
 
         const Node *find(TokenType t) const {
             for (auto &c : children) {
-                if (c.first(t)) {
-                    return &c.second;
+                if (c.matcher(t)) {
+                    return &c;
                 }
             }
             return nullptr;
@@ -59,8 +67,8 @@ public:
 
         Node *find(TokenType t) {
             for (auto &c : children) {
-                if (c.first(t)) {
-                    return &c.second;
+                if (c.matcher(t)) {
+                    return &c;
                 }
             }
             return nullptr;
@@ -68,12 +76,12 @@ public:
 
         Node &findOrCreate(Matcher t) {
             for (auto &c : children) {
-                if (c.first == t) {
-                    return c.second;
+                if (c.matcher == t) {
+                    return c;
                 }
             }
-            children.push_back({Matcher{t}, Node{this}});
-            return children.back().second;
+            children.push_back(Node{this, t});
+            return children.back();
         }
 
         friend AstTreeLookup;
@@ -96,7 +104,7 @@ public:
             VecT{Expression, {Equals, BinaryOperator}, Expression, Semicolon});
     }
 
-    Node root;
+    Node root{{}, {Uncategorized}};
 
 private:
     void add(TokenType resT, std::vector<Matcher> arr) {
