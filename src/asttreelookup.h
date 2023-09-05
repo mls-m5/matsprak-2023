@@ -1,6 +1,5 @@
 #pragma once
 
-#include "ast.h"
 #include "token.h"
 #include "tokenizer.h"
 #include <array>

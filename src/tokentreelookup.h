@@ -45,8 +45,11 @@ struct TokenTreeLookup {
         root.add("*", Multiply);
         root.add("/", Divide);
         root.add("%", Modulo);
-        root.add("&", And);
-        root.add("|", Or);
+
+        root.add("&", BinaryAnd);
+        root.add("|", BinaryOr);
+        root.add("&&", And);
+        root.add("||", Or);
         root.add("^", Xor);
         root.add("!", Not);
         root.add("~", Tilde);

@@ -7,6 +7,29 @@
 #include <sstream>
 #include <string>
 
+TEST(TokenizerTest, ParenTest) {
+    std::string code = R"(
+        ()
+     )";
+
+    std::shared_ptr<File> file = File::from_string(std::move(code), "test.msp");
+
+    auto tfile = tokenize(file);
+
+    std::cerr << *tfile << "\n";
+    TokenIterator it = tfile;
+
+    std::vector<std::string> expected = {"(", ")"};
+
+    for (const auto &expected_token : expected) {
+        ASSERT_TRUE(it.current() != nullptr);
+        EXPECT_EQ(expected_token, it.current()->text());
+        ++it;
+    }
+
+    ASSERT_EQ(nullptr, it.current());
+}
+
 TEST(TokenizerTest, SingleDoubleCharacterOperator) {
     std::string code = R"(
         ++ ++
@@ -14,17 +37,10 @@ TEST(TokenizerTest, SingleDoubleCharacterOperator) {
 
     std::shared_ptr<File> file = File::from_string(std::move(code), "test.msp");
 
-    TokenIterator it = tokenize(file);
+    auto tfile = tokenize(file);
 
-    auto it2 = it;
-
-    {
-        Token *token = nullptr;
-        for (auto it2 = it; (token = it2.current()); ++it2) {
-            std::cerr << std::setw(10) << std::left << token->text()
-                      << toString(token->type()) << "\n";
-        }
-    }
+    std::cerr << *tfile << "\n";
+    TokenIterator it = tfile;
 
     std::vector<std::string> expected = {"++", "++"};
 
@@ -48,17 +64,10 @@ TEST(TokenizerTest, BasicTest) {
 
     std::shared_ptr<File> file = File::from_string(std::move(code), "test.msp");
 
-    TokenIterator it = tokenize(file);
+    auto tfile = tokenize(file);
+    TokenIterator it = tfile;
 
-    auto it2 = it;
-
-    {
-        Token *token = nullptr;
-        for (auto it2 = it; (token = it2.current()); ++it2) {
-            std::cerr << std::setw(10) << std::left << token->text()
-                      << toString(token->type()) << "\n";
-        }
-    }
+    std::cerr << *tfile << std::endl;
 
     std::vector<std::string> expected = {
         "fn", "main", "(", ")",   "{",   "let", "x", "=", "10", ";", "let", "y",
@@ -84,17 +93,11 @@ TEST(TokenizerTest, OperatorTest) {
 
     std::shared_ptr<File> file = File::from_string(std::move(code), "test.msp");
 
-    TokenIterator it = tokenize(file);
+    auto tfile = tokenize(file);
 
-    auto it2 = it;
+    std::cerr << *tfile << std::endl;
 
-    {
-        Token *token = nullptr;
-        for (auto it2 = it; (token = it2.current()); ++it2) {
-            std::cerr << std::setw(10) << std::left << token->text()
-                      << toString(token->type()) << "\n";
-        }
-    }
+    TokenIterator it = tfile;
 
     std::vector<std::string> expected = {
         "fn", "main", "(",   ")", "{", "let", "i", "=", "0",

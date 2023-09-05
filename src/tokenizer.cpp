@@ -78,12 +78,15 @@ void tokenizeLine(std::string_view line,
     auto charType = Space;
     auto firstType = Space;
 
-    auto finishToken = [&](/*char c*/) {
+    auto finishToken = [&](TokenType foundType = Invalid) {
         if (current.empty()) {
             return;
         }
 
-        auto type = t.get();
+        auto type = (foundType == Invalid) ? t.get() : foundType;
+        //        if (!foundType) {
+        //        auto type = t.get();
+        //        }
         if (type == Invalid) {
             type = Word;
             if (firstType == Numeric) {
@@ -114,7 +117,7 @@ void tokenizeLine(std::string_view line,
         auto type = t.push(c);
 
         if (charType == Operator && type != Invalid) {
-            finishToken();
+            finishToken(type);
         }
 
         if (charType != Space) {
@@ -127,7 +130,13 @@ void tokenizeLine(std::string_view line,
         }
     }
 
-    finishToken();
+    if (!current.empty()) {
+        t.reset();
+        for (auto c : current) {
+            t.push(c);
+        }
+        finishToken(t.get());
+    }
 }
 
 } // anonymous namespace
@@ -139,7 +148,13 @@ std::shared_ptr<TokenizedFile> tokenize(const std::shared_ptr<File> &file) {
         tokenizeLine(line, tokenizedFile->tokens, file);
     }
 
-    //    return TokenIterator(tokenizedFile);
+    auto &tokens = tokenizedFile->tokens;
+    for (int i = 1; i < tokens.size(); ++i) {
+        tokens.at(i - 1).next(&tokens.at(i));
+    }
+
+    tokenizedFile->root.children(&tokens.front());
+
     return tokenizedFile;
 }
 
