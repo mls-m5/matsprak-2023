@@ -13,6 +13,7 @@
     X(Invalid, Uncategorized)                                                  \
     X(ParenthesesBegin, BeginGroup)                                            \
     X(ParenthesesEnd, EndGroup)                                                \
+    X(ParenGroup, Expression)                                                  \
     X(Word, Expression)                                                        \
     X(NumericLiteral, Expression)                                              \
     X(BraceBegin, Uncategorized)                                               \

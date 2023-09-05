@@ -133,7 +133,7 @@ public:
     }
 };
 
-void group(AstTreeState &state, std::shared_ptr<TokenizedFile> tokens) {
+inline void group(AstTreeState &state, std::shared_ptr<TokenizedFile> tokens) {
     for (auto it = TokenIterator{tokens}; it.current(); ++it) {
         if (auto t = state.push(it.current()->type())) {
             it.current()->type(t->type);
