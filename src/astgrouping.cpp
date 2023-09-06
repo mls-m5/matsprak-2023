@@ -42,7 +42,9 @@ void groupParentheses(Ast &ast, ptrdiff_t a) {
     }
 }
 
-void groupAst(Ast &ast, AstTreeLookup &t) {
+void groupAst(Ast &ast, StateComposite &composite);
+
+void groupAst(Ast &ast, AstTreeLookup &t, StateComposite &composite) {
     //    auto t = AstTreeLookup{};
     auto state = AstTreeState{t};
 
@@ -88,14 +90,18 @@ void groupAst(Ast &ast, AstTreeLookup &t) {
     }
 
     for (auto &c : ast.children()) {
-        groupAst(*c);
+        groupAst(*c, composite);
+    }
+}
+
+void groupAst(Ast &ast, StateComposite &composite) {
+    for (auto &lookup : composite.lookups) {
+        groupAst(ast, lookup, composite);
     }
 }
 
 void groupAst(Ast &ast) {
     StateComposite composite;
 
-    for (auto &lookup : composite.lookups) {
-        groupAst(ast, lookup);
-    }
+    groupAst(ast, composite);
 }

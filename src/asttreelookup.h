@@ -149,6 +149,7 @@ public:
             auto &l = lookups.emplace_back();
             l.add(StructDeclaration, {Struct, {Word, Name}, BraceGroup});
             l.add(FunctionDeclaration, {Fn, Word, ParenGroup});
+            l.add(FunctionDeclaration, {Fn, Word, ParenGroup, BraceGroup});
         }
         {
             // 2
@@ -191,5 +192,9 @@ public:
         }
     }
 
+    StateComposite(const StateComposite &) = delete;
+    StateComposite(StateComposite &&) = delete;
+    StateComposite &operator=(const StateComposite &) = delete;
+    StateComposite &operator=(StateComposite &&) = delete;
     void reset() {}
 };
