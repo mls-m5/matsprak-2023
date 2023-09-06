@@ -5,6 +5,9 @@
 #include "token.h"
 #include "tokenizer.h"
 // #include "parser.h"
+#include "ast.h"
+#include "astgrouping.h"
+#include "testfile.h"
 #include <filesystem>
 #include <gtest/gtest.h>
 #include <iomanip>
@@ -17,26 +20,28 @@ TEST(ParserTest, BasicTest) {
     std::string code = R"(
         let x = 10;
         x = 30;
+        let y: int;
     )";
 
-    std::shared_ptr<File> file = File::from_string(code, "test.msp");
-    auto tokens = tokenize(file);
-    auto it = TokenIterator{tokens};
+    auto file = TestFile{code};
+    auto it = TokenIterator{file.tfile};
 
     auto tree = AstTreeLookup{};
     auto state = AstTreeState{tree};
 
-    for (; it.current(); ++it) {
-        std::cout << std::setw(10) << std::left << it.current()->text();
+    std::cerr << *file.tfile << std::endl;
 
-        std::cout << std::setw(20) << std::left
+    for (; it.current(); ++it) {
+        std::cerr << std::setw(10) << std::left << it.current()->text();
+
+        std::cerr << std::setw(20) << std::left
                   << toString(it.current()->type());
 
         auto t = state.push(it.current()->type());
         if (t) {
-            std::cout << toString(t->type);
+            std::cerr << toString(t->type);
 
-            std::cout << ": ";
+            std::cerr << ": ";
             auto resVec = std::vector<TokenType>{};
             for (auto res = t; res != nullptr; res = res->parent) {
                 resVec.push_back(res->matcher.result);
@@ -45,29 +50,16 @@ TEST(ParserTest, BasicTest) {
             std::reverse(resVec.begin(), resVec.end());
 
             for (auto r : resVec) {
-                std::cout << toString(r) << " ";
+                std::cerr << toString(r) << " ";
             }
         }
 
-        std::cout << std::endl;
+        std::cerr << std::endl;
     }
+
+    auto ast = Ast{*file.tfile};
+
+    groupAst(ast);
+
+    std::cerr << ast << std::endl;
 }
-
-// TEST(ParserTest, BasicTest) {
-//     std::string code = R"(
-//         module main;
-//         import apa;
-
-//        fn main() {
-//            let x = 10;
-//            let y = 20;
-//            let sum = x + y;
-//        }
-//    )";
-
-//    std::shared_ptr<File> file = File::from_string(code, "test.msp");
-
-////    AstModule module;
-
-////    parse(module, file);
-//}

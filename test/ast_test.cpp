@@ -1,6 +1,7 @@
 
 #include "ast.h"
-#include "file.h"
+#include "astgrouping.h"
+#include "testfile.h"
 #include "tokenizer.h"
 #include <filesystem>
 #include <gtest/gtest.h>
@@ -10,29 +11,6 @@
 #include <sstream>
 #include <string>
 
-void groupParentheses(Ast &ast, ptrdiff_t a) {
-    for (size_t i = a; i < ast.children().size(); ++i) {
-        auto child = ast.children().at(i).get();
-        if (child->type() == ParenthesesBegin) {
-            groupParentheses(ast, i + 1);
-
-            for (size_t j = i + 1; j < ast.children().size(); ++j) {
-                auto child2 = ast.children().at(j).get();
-                if (child2->type() == ParenthesesEnd) {
-                    ast.group(
-                        ParenGroup, ast.begin() + i, ast.begin() + j + 1, true);
-                    i = i + 1;
-                    break;
-                }
-            }
-        }
-    }
-}
-
-void groupParentheses(Ast &ast) {
-    groupParentheses(ast, 1);
-}
-
 TEST(AstTest, BasicTest) {
     std::string code = R"(
         let b = (x(arg) + y);
@@ -40,14 +18,12 @@ TEST(AstTest, BasicTest) {
         x = 30;
     )";
 
-    std::shared_ptr<File> file = File::from_string(code, "test.msp");
-    auto tfile = tokenize(file);
+    auto file = TestFile{code};
 
-    std::cout << *tfile << std::endl;
+    std::cout << *file.tfile << std::endl;
 
-    auto ast = Ast{*tfile};
+    auto ast = Ast{*file.tfile};
 
-    //    ast.group(Invalid, ast.begin() + 1, ast.begin() + 4);
     groupParentheses(ast);
 
     std::cout << ast << std::endl;

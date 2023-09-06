@@ -19,6 +19,7 @@
     X(BraceBegin, Uncategorized)                                               \
     X(BraceEnd, Uncategorized)                                                 \
     X(Comma, Uncategorized)                                                    \
+    X(Colon, Uncategorized)                                                    \
     X(Semicolon, Uncategorized)                                                \
     /* KeyWords */                                                             \
     X(Let, KeyWord)                                                            \

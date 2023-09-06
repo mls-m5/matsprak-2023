@@ -11,6 +11,7 @@ add_library(
     src/parser.cpp
     src/token.cpp
     src/ast.cpp
+    src/astgrouping.cpp
 )
 target_compile_features(matsprak_lib PRIVATE cxx_std_20)
 

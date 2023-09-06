@@ -99,6 +99,9 @@ public:
     AstTreeLookup() {
         using VecT = std::vector<Matcher>;
         add(LetStatement, VecT{Let, Word, Equals, NumericLiteral, Semicolon});
+
+        /// TODO: Create separate result type?
+        add(LetStatement, VecT{Let, Word, Colon, Expression});
         add(AssignmentExpression,
             VecT{Expression, {Equals, BinaryOperator}, Expression, Semicolon});
     }
@@ -123,13 +126,14 @@ public:
     AstTreeLookup::Node *push(TokenType t) {
         if (auto f = current->find(t)) {
             current = f;
-            if (f->hasType()) {
-                current = root;
-                return f;
-            }
+            return f;
         }
 
         return nullptr;
+    }
+
+    void reset() {
+        current = root;
     }
 };
 

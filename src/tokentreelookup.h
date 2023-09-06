@@ -90,6 +90,7 @@ struct TokenTreeLookup {
         root.add("}", BraceEnd);
         root.add(",", Comma);
         root.add(";", Semicolon);
+        root.add(":", Colon);
     }
 
     TokenTreeLookup(const TokenTreeLookup &) = delete;
