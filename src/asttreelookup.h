@@ -102,6 +102,7 @@ public:
 
         /// TODO: Create separate result type?
         add(LetStatement, VecT{Let, Word, Colon, Expression});
+        add(FunctionDeclaration, VecT{Fn, Word, ParenGroup}); // Add bracesGroup
         add(AssignmentExpression,
             VecT{Expression, {Equals, BinaryOperator}, Expression, Semicolon});
     }

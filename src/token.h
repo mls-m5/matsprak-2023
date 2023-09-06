@@ -89,6 +89,7 @@
     X(PointerToMemberOperator, Uncategorized)                                  \
     X(Punctuation, Uncategorized)                                              \
     X(LetStatement, Uncategorized)                                             \
+    X(FunctionDeclaration, Uncategorized)                                      \
     X(BeginGroup, Uncategorized)                                               \
     X(EndGroup, Uncategorized)                                                 \
     X(AssignmentExpression, Uncategorized)                                     \

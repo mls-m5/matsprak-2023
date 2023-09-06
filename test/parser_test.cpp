@@ -21,6 +21,11 @@ TEST(ParserTest, BasicTest) {
         let x = 10;
         x = 30;
         let y: int;
+
+
+        fn main() {
+            let apa = Apa();
+        }
     )";
 
     auto file = TestFile{code};
