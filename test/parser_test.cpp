@@ -29,12 +29,6 @@ TEST(ParserTest, BasicTest) {
     std::cerr << code << "\n";
 
     auto file = TestFile{code};
-    auto it = TokenIterator{file.tfile};
-
-    auto tree = AstTreeLookup{};
-    auto state = AstTreeState{tree};
-
-    std::cerr << *file.tfile << std::endl;
 
     auto ast = Ast{*file.tfile};
 
@@ -58,12 +52,6 @@ TEST(ParserTest, Functions) {
     std::cerr << code << "\n";
 
     auto file = TestFile{code};
-    //    auto it = TokenIterator{file.tfile};
-
-    auto tree = AstTreeLookup{};
-    auto state = AstTreeState{tree};
-
-    //    std::cerr << *file.tfile << std::endl;
 
     auto ast = Ast{*file.tfile};
 
@@ -90,12 +78,6 @@ TEST(ParserTest, Structs) {
     std::cerr << code << "\n";
 
     auto file = TestFile{code};
-    //    auto it = TokenIterator{file.tfile};
-
-    auto tree = AstTreeLookup{};
-    auto state = AstTreeState{tree};
-
-    //    std::cerr << *file.tfile << std::endl;
 
     auto ast = Ast{*file.tfile};
 
@@ -114,8 +96,23 @@ TEST(ParserTest, Parentheses) {
 
     auto file = TestFile{code};
 
-    auto tree = AstTreeLookup{};
-    auto state = AstTreeState{tree};
+    auto ast = Ast{*file.tfile};
+
+    groupParentheses(ast);
+    groupAst(ast);
+
+    std::cerr << ast << std::endl;
+}
+
+TEST(ParserTest, Types) {
+    std::string code = R"(
+          x: int;
+          let y: int;
+    )";
+
+    std::cerr << code << "\n";
+
+    auto file = TestFile{code};
 
     auto ast = Ast{*file.tfile};
 

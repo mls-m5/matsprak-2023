@@ -179,12 +179,15 @@ public:
 
             /// TODO: Create separate result type?
             l.add(LetStatement, {Let, Word, Colon, Expression});
+
+            /// TODO: Why does Expression work, but not Word for the first type?
+            l.add(VariableWithType, {Expression, Colon, Expression});
         }
         {
             // Semicolons
             auto &l = lookups.emplace_back();
             l.add(Statement, {Expression, Semicolon});
-            l.add(CommaList, {Comma, Expression, Comma});
+            l.add(CommaList, {Expression, Comma, Expression});
         }
     }
 

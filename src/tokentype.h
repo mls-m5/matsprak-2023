@@ -105,6 +105,7 @@
     X(Expression, Uncategorized)                                               \
     X(Statement, Uncategorized)                                                \
     X(CommaList, Uncategorized)                                                \
+    X(VariableWithType, Uncategorized)                                         \
     X(Count, Uncategorized) // This should always be the last item
 
 // Generate enum
