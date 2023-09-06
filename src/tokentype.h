@@ -34,9 +34,9 @@
     X(BinaryAnd, BasicOperator) /* & */                                        \
     X(BinaryOr, BasicOperator)  /* | */                                        \
     X(Or, BasicOperator)        /* || */                                       \
-    X(Xor, BasicOperator)       /* ^ */                                        \
-    X(Not, BasicOperator)       /* ! */                                        \
-    X(Tilde, BasicOperator)     /* ~ */                                        \
+    X(Xor, UnaryOperator)       /* ^ */                                        \
+    X(Not, UnaryOperator)       /* ! */                                        \
+    X(Tilde, UnaryOperator)     /* ~ */                                        \
     X(Equals, BasicOperator)    /* = */                                        \
     /* Unary operators */                                                      \
     X(PlusPlus, UnaryOperator)   /* ++ */                                      \
@@ -77,8 +77,9 @@
     X(Uncategorized, Uncategorized)                                            \
     X(KeyWord, Uncategorized)                                                  \
     X(UnaryOperator, Uncategorized)                                            \
-    X(BasicOperator, Uncategorized)                                            \
+    X(BasicOperator, BinaryOperator)                                           \
     X(BinaryOperator, Uncategorized)                                           \
+    X(BinaryOperation, Expression)                                             \
     X(RelationalOperator, Uncategorized)                                       \
     X(LogicalOperator, Uncategorized)                                          \
     X(BitwiseShiftOperator, Uncategorized)                                     \

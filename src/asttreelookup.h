@@ -2,6 +2,7 @@
 
 #include "token.h"
 #include "tokenizer.h"
+#include "tokentype.h"
 #include <array>
 #include <cstddef>
 #include <list>
@@ -101,10 +102,11 @@ public:
         add(LetStatement, VecT{Let, Word, Equals, NumericLiteral, Semicolon});
 
         /// TODO: Create separate result type?
-        add(LetStatement, VecT{Let, Word, Colon, Expression});
-        add(FunctionDeclaration, VecT{Fn, Word, ParenGroup}); // Add bracesGroup
+        add(LetStatement, {Let, Word, Colon, Expression});
+        add(FunctionDeclaration, {Fn, Word, ParenGroup}); // Add bracesGroup
         add(AssignmentExpression,
-            VecT{Expression, {Equals, BinaryOperator}, Expression, Semicolon});
+            {Expression, {Equals, BinaryOperator}, Expression});
+        add(BinaryOperation, {Expression, BinaryOperator, Expression});
     }
 
     Node root{{}, {Uncategorized}};

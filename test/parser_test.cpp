@@ -22,8 +22,9 @@ TEST(ParserTest, BasicTest) {
         x = 30;
         let y: int;
 
+        1 + 2;
 
-        fn main() {
+        fn hello(text: string_view) {
             let apa = Apa();
         }
     )";
