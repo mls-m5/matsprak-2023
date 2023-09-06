@@ -24,8 +24,8 @@ void groupParentheses(Ast &ast, ptrdiff_t a) {
     }
 }
 
-void groupAst(Ast &ast) {
-    auto t = AstTreeLookup{};
+void groupAst(Ast &ast, AstTreeLookup &t) {
+    //    auto t = AstTreeLookup{};
     auto state = AstTreeState{t};
 
     for (size_t i = 2; i < ast.children().size(); ++i) {
@@ -53,8 +53,23 @@ void groupAst(Ast &ast) {
         }
 
         if (hypothesis != Invalid) {
+            if (resIndex2 - index1 + 1 >= ast.children().size()) {
+                continue;
+            }
             ast.group(
                 hypothesis, ast.begin() + index1, ast.begin() + resIndex2 + 1);
         }
+    }
+
+    for (auto &c : ast.children()) {
+        groupAst(*c);
+    }
+}
+
+void groupAst(Ast &ast) {
+    StateComposite composite;
+
+    for (auto &lookup : composite.lookups) {
+        groupAst(ast, lookup);
     }
 }

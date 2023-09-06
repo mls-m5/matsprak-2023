@@ -1,13 +1,10 @@
 
-// #include "astmodule.h"
-#include "asttreelookup.h"
-#include "file.h"
-#include "token.h"
-#include "tokenizer.h"
-// #include "parser.h"
 #include "ast.h"
 #include "astgrouping.h"
+#include "asttreelookup.h"
 #include "testfile.h"
+#include "token.h"
+#include "tokenizer.h"
 #include <filesystem>
 #include <gtest/gtest.h>
 #include <iomanip>
@@ -22,7 +19,7 @@ TEST(ParserTest, BasicTest) {
         x = 30;
         let y: int;
 
-        1 + 2;
+        y = 1 + 2 * 3;
 
         fn hello(text: string_view) {
             let apa = Apa();
@@ -39,31 +36,34 @@ TEST(ParserTest, BasicTest) {
 
     std::cerr << *file.tfile << std::endl;
 
-    for (; it.current(); ++it) {
-        std::cerr << std::setw(10) << std::left << it.current()->text();
+    auto ast = Ast{*file.tfile};
 
-        std::cerr << std::setw(20) << std::left
-                  << toString(it.current()->type());
+    groupParentheses(ast);
+    groupAst(ast);
 
-        auto t = state.push(it.current()->type());
-        if (t) {
-            std::cerr << toString(t->type);
+    std::cerr << ast << std::endl;
+}
 
-            std::cerr << ": ";
-            auto resVec = std::vector<TokenType>{};
-            for (auto res = t; res != nullptr; res = res->parent) {
-                resVec.push_back(res->matcher.result);
-            }
-            resVec.pop_back();
-            std::reverse(resVec.begin(), resVec.end());
-
-            for (auto r : resVec) {
-                std::cerr << toString(r) << " ";
-            }
+TEST(ParserTest, Functions) {
+    std::string code = R"(
+        fn there(text: string_view) {
+            print(text);
         }
 
-        std::cerr << std::endl;
-    }
+        fn hello(text: string_view) {
+            there(text);
+        }
+    )";
+
+    std::cerr << code << "\n";
+
+    auto file = TestFile{code};
+    auto it = TokenIterator{file.tfile};
+
+    auto tree = AstTreeLookup{};
+    auto state = AstTreeState{tree};
+
+    std::cerr << *file.tfile << std::endl;
 
     auto ast = Ast{*file.tfile};
 

@@ -89,6 +89,7 @@
     X(Punctuation, Uncategorized)                                              \
     X(LetStatement, Uncategorized)                                             \
     X(FunctionDeclaration, Uncategorized)                                      \
+    X(FunctionCall, Expression)                                                \
     X(BeginGroup, Uncategorized)                                               \
     X(EndGroup, Uncategorized)                                                 \
     X(AssignmentExpression, Uncategorized)                                     \

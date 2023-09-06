@@ -1,7 +1,5 @@
 #pragma once
 
-#include "token.h"
-#include "tokenizer.h"
 #include "tokentype.h"
 #include <array>
 #include <cstddef>
@@ -86,7 +84,6 @@ public:
 
         friend AstTreeLookup;
 
-    private:
         void add(TokenType type, std::vector<Matcher> key) {
             if (key.empty()) {
                 this->type = type;
@@ -97,24 +94,15 @@ public:
         }
     };
 
-    AstTreeLookup() {
-        using VecT = std::vector<Matcher>;
-        add(LetStatement, VecT{Let, Word, Equals, NumericLiteral, Semicolon});
-
-        /// TODO: Create separate result type?
-        add(LetStatement, {Let, Word, Colon, Expression});
-        add(FunctionDeclaration, {Fn, Word, ParenGroup}); // Add bracesGroup
-        add(AssignmentExpression,
-            {Expression, {Equals, BinaryOperator}, Expression});
-        add(BinaryOperation, {Expression, BinaryOperator, Expression});
-    }
-
-    Node root{{}, {Uncategorized}};
-
-private:
     void add(TokenType resT, std::vector<Matcher> arr) {
         root.add(resT, arr);
     }
+
+    AstTreeLookup() {
+        //        using VecT = std::vector<Matcher>;
+    }
+
+    Node root{{}, {Uncategorized}};
 };
 
 class AstTreeState {
@@ -125,6 +113,8 @@ public:
     AstTreeState(AstTreeLookup &l)
         : root{&l.root}
         , current{&l.root} {}
+
+    AstTreeState() = default;
 
     AstTreeLookup::Node *push(TokenType t) {
         if (auto f = current->find(t)) {
@@ -138,12 +128,53 @@ public:
     void reset() {
         current = root;
     }
+
+    void reset(AstTreeLookup::Node *node) {
+        root = current = node;
+    }
 };
 
-inline void group(AstTreeState &state, std::shared_ptr<TokenizedFile> tokens) {
-    for (auto it = TokenIterator{tokens}; it.current(); ++it) {
-        if (auto t = state.push(it.current()->type())) {
-            it.current()->type(t->type);
+class StateComposite {
+public:
+    AstTreeState state;
+
+    std::vector<AstTreeLookup> lookups;
+
+    StateComposite() {
+        // Using c++ operator precedence
+        // https://en.cppreference.com/w/cpp/language/operator_precedence
+
+        {
+            // Complex expressions
+            auto &l = lookups.emplace_back();
+            l.add(FunctionDeclaration,
+                  {Fn, Word, ParenGroup}); // Add bracesGroup
+        }
+        {
+            // 2
+            auto &l = lookups.emplace_back();
+
+            l.add(FunctionCall, {Expression, ParenGroup}); // Add bracesGroup
+        }
+        {
+            // Unordered
+            auto &l = lookups.emplace_back();
+
+            l.add(AssignmentExpression,
+                  {Expression, {Equals, BinaryOperator}, Expression});
+            l.add(BinaryOperation, {Expression, BinaryOperator, Expression});
+
+            l.add(LetStatement, {Let, Word, Equals, NumericLiteral, Semicolon});
+
+            /// TODO: Create separate result type?
+            l.add(LetStatement, {Let, Word, Colon, Expression});
+        }
+        {
+            // Semicolons
+            auto &l = lookups.emplace_back();
+            l.add(Statement, {Expression, Semicolon});
         }
     }
-}
+
+    void reset() {}
+};

@@ -39,7 +39,7 @@ struct NodeRange {
 
 enum NodeType {
     Function,
-    FunctionCall,
+    //    FunctionCall,
     ImportStatement,
 };
 

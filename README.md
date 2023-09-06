@@ -1,6 +1,8 @@
 # matsprak-2023
 
 
+*Note: Do not learn programming pattern from this repo, most of the code is uggly and just thrown together.*
+
 # Target features
 
 ## Differently strict modes in prototyping and release
