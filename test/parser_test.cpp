@@ -50,8 +50,40 @@ TEST(ParserTest, Functions) {
             print(text);
         }
 
-        fn hello(text: string_view) {
+        fn hello(text: string_view, unused: int) {
             there(text);
+        }
+    )";
+
+    std::cerr << code << "\n";
+
+    auto file = TestFile{code};
+    auto it = TokenIterator{file.tfile};
+
+    auto tree = AstTreeLookup{};
+    auto state = AstTreeState{tree};
+
+    std::cerr << *file.tfile << std::endl;
+
+    auto ast = Ast{*file.tfile};
+
+    groupParentheses(ast);
+    groupAst(ast);
+
+    std::cerr << ast << std::endl;
+}
+
+TEST(ParserTest, Structs) {
+    std::string code = R"(
+        struct Apa {
+            fn print(text: string_view) {
+                x(text);
+            }
+        }
+
+        fn hello(text: string_view, unused: int) {
+            let apa = Apa();
+            apa.print("hello");
         }
     )";
 

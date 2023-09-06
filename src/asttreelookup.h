@@ -147,14 +147,17 @@ public:
         {
             // Complex expressions
             auto &l = lookups.emplace_back();
-            l.add(FunctionDeclaration,
-                  {Fn, Word, ParenGroup}); // Add bracesGroup
+            l.add(FunctionDeclaration, {Fn, Word, ParenGroup});
         }
         {
             // 2
             auto &l = lookups.emplace_back();
 
-            l.add(FunctionCall, {Expression, ParenGroup}); // Add bracesGroup
+            l.add(FunctionCall,
+                  {Expression,
+                   ParenGroup}); // Does not seem to work for member accessors
+            l.add(MemberAccessor,
+                  {Expression, MemberAccessOperator, Expression});
         }
         {
             // Unordered
@@ -173,6 +176,7 @@ public:
             // Semicolons
             auto &l = lookups.emplace_back();
             l.add(Statement, {Expression, Semicolon});
+            l.add(CommaList, {Comma, Expression, Comma});
         }
     }
 

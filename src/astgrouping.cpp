@@ -28,7 +28,10 @@ void groupAst(Ast &ast, AstTreeLookup &t) {
     //    auto t = AstTreeLookup{};
     auto state = AstTreeState{t};
 
-    for (size_t i = 2; i < ast.children().size(); ++i) {
+    bool shouldRedoSame = false;
+
+    for (size_t i = 2; i < ast.children().size();
+         i += !shouldRedoSame, shouldRedoSame = false) {
         state.reset();
         auto index1 = i - 2;
 
@@ -58,6 +61,8 @@ void groupAst(Ast &ast, AstTreeLookup &t) {
             }
             ast.group(
                 hypothesis, ast.begin() + index1, ast.begin() + resIndex2 + 1);
+
+            shouldRedoSame = true;
         }
     }
 

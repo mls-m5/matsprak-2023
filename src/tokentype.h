@@ -66,6 +66,7 @@
     X(LeftShift, BitwiseShiftOperator)  /* << */                               \
     X(RightShift, BitwiseShiftOperator) /* >> */                               \
     /* Member Access */                                                        \
+    X(Period, MemberAccessOperator)                                            \
     X(Arrow, MemberAccessOperator)     /* -> */                                \
     X(ArrowStar, MemberAccessOperator) /* ->* */                               \
     /* Scope resolution */                                                     \
@@ -83,11 +84,12 @@
     X(RelationalOperator, Uncategorized)                                       \
     X(LogicalOperator, Uncategorized)                                          \
     X(BitwiseShiftOperator, Uncategorized)                                     \
+    X(MemberAccessor, Expression)                                              \
     X(MemberAccessOperator, Uncategorized)                                     \
     X(ScopeOperator, Uncategorized)                                            \
     X(PointerToMemberOperator, Uncategorized)                                  \
     X(Punctuation, Uncategorized)                                              \
-    X(LetStatement, Uncategorized)                                             \
+    X(LetStatement, Statement)                                                 \
     X(FunctionDeclaration, Uncategorized)                                      \
     X(FunctionCall, Expression)                                                \
     X(BeginGroup, Uncategorized)                                               \
@@ -95,6 +97,7 @@
     X(AssignmentExpression, Uncategorized)                                     \
     X(Expression, Uncategorized)                                               \
     X(Statement, Uncategorized)                                                \
+    X(CommaList, Uncategorized)                                                \
     X(Count, Uncategorized) // This should always be the last item
 
 // Generate enum
