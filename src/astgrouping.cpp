@@ -1,21 +1,39 @@
 #include "astgrouping.h"
 #include "asttreelookup.h"
+#include "tokentype.h"
+#include <optional>
 
 void groupParentheses(Ast &ast) {
     groupParentheses(ast, 1);
 }
 
 void groupParentheses(Ast &ast, ptrdiff_t a) {
+    auto isBegin =
+        [](TokenType t) -> std::optional<std::pair<TokenType, TokenType>> {
+        if (t == ParenthesesBegin) {
+            return std::pair{ParenthesesEnd, ParenGroup};
+        }
+        if (t == BraceBegin) {
+            return std::pair{BraceEnd, BraceGroup};
+        }
+        if (t == BracketBegin) {
+            return std::pair{BracketEnd, BracketGroup};
+        }
+        return std::nullopt;
+    };
+
     for (size_t i = a; i < ast.children().size(); ++i) {
         auto child = ast.children().at(i).get();
-        if (child->type() == ParenthesesBegin) {
+        if (auto endType = isBegin(child->type())) {
             groupParentheses(ast, i + 1);
 
             for (size_t j = i + 1; j < ast.children().size(); ++j) {
                 auto child2 = ast.children().at(j).get();
-                if (child2->type() == ParenthesesEnd) {
-                    ast.group(
-                        ParenGroup, ast.begin() + i, ast.begin() + j + 1, true);
+                if (child2->type() == endType->first) {
+                    ast.group(endType->second,
+                              ast.begin() + i,
+                              ast.begin() + j + 1,
+                              true);
                     i = i + 1;
                     break;
                 }
@@ -56,7 +74,10 @@ void groupAst(Ast &ast, AstTreeLookup &t) {
         }
 
         if (hypothesis != Invalid) {
-            if (resIndex2 - index1 + 1 >= ast.children().size()) {
+            bool isGroup = ast.type() == ParenGroup ||
+                           ast.type() == BraceGroup ||
+                           ast.type() == BracketGroup;
+            if (resIndex2 - index1 + 1 >= ast.children().size() && !isGroup) {
                 continue;
             }
             ast.group(

@@ -38,6 +38,7 @@ struct TokenTreeLookup {
         root.add("fn", Fn);
         root.add("template", Template);
         root.add("type", Type);
+        root.add("struct", Struct);
 
         // Single-character Operators
         root.add("+", Plus);

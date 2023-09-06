@@ -147,6 +147,7 @@ public:
         {
             // Complex expressions
             auto &l = lookups.emplace_back();
+            l.add(StructDeclaration, {Struct, {Word, Name}, BraceGroup});
             l.add(FunctionDeclaration, {Fn, Word, ParenGroup});
         }
         {
@@ -159,15 +160,22 @@ public:
             l.add(MemberAccessor,
                   {Expression, MemberAccessOperator, Expression});
         }
+
         {
-            // Unordered
+            // 16
             auto &l = lookups.emplace_back();
 
             l.add(AssignmentExpression,
                   {Expression, {Equals, BinaryOperator}, Expression});
+        }
+
+        {
+            // Unordered
+            auto &l = lookups.emplace_back();
+
             l.add(BinaryOperation, {Expression, BinaryOperator, Expression});
 
-            l.add(LetStatement, {Let, Word, Equals, NumericLiteral, Semicolon});
+            l.add(LetStatement, {Let, AssignmentExpression, Semicolon});
 
             /// TODO: Create separate result type?
             l.add(LetStatement, {Let, Word, Colon, Expression});

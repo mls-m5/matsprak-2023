@@ -12,10 +12,15 @@
     X(ParenthesesBegin, BeginGroup)                                            \
     X(ParenthesesEnd, EndGroup)                                                \
     X(ParenGroup, Expression)                                                  \
+    X(BraceGroup, Uncategorized)                                               \
+    X(BracketGroup, Uncategorized)                                             \
     X(Word, Expression)                                                        \
+    X(Name, Uncategorized)                                                     \
     X(NumericLiteral, Expression)                                              \
     X(BraceBegin, Uncategorized)                                               \
     X(BraceEnd, Uncategorized)                                                 \
+    X(BracketBegin, Uncategorized)                                             \
+    X(BracketEnd, Uncategorized)                                               \
     X(Comma, Uncategorized)                                                    \
     X(Colon, Uncategorized)                                                    \
     X(Semicolon, Uncategorized)                                                \
@@ -24,6 +29,7 @@
     X(Template, KeyWord)                                                       \
     X(Type, KeyWord)                                                           \
     X(Fn, KeyWord)                                                             \
+    X(Struct, KeyWord)                                                         \
     /* Unary and basic operators */                                            \
     X(Plus, BasicOperator)      /* + */                                        \
     X(Minus, BasicOperator)     /* - */                                        \
@@ -90,6 +96,7 @@
     X(PointerToMemberOperator, Uncategorized)                                  \
     X(Punctuation, Uncategorized)                                              \
     X(LetStatement, Statement)                                                 \
+    X(StructDeclaration, Uncategorized)                                        \
     X(FunctionDeclaration, Uncategorized)                                      \
     X(FunctionCall, Expression)                                                \
     X(BeginGroup, Uncategorized)                                               \
