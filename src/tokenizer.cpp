@@ -118,6 +118,7 @@ void tokenizeLine(std::string_view line,
 
         if (charType == Operator && type != Invalid) {
             finishToken(type);
+            t.push(c); // Since push lags behind a character
         }
 
         if (charType != Space) {

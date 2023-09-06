@@ -28,6 +28,8 @@ TEST(ParserTest, BasicTest) {
         }
     )";
 
+    std::cerr << code << "\n";
+
     auto file = TestFile{code};
     auto it = TokenIterator{file.tfile};
 
@@ -64,6 +66,7 @@ TEST(ParserTest, BasicTest) {
 
     auto ast = Ast{*file.tfile};
 
+    groupParentheses(ast);
     groupAst(ast);
 
     std::cerr << ast << std::endl;

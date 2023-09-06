@@ -9,7 +9,8 @@
 
 TEST(TokenizerTest, ParenTest) {
     std::string code = R"(
-        ()
+        ();
+        fn main() { }
      )";
 
     std::shared_ptr<File> file = File::from_string(std::move(code), "test.msp");
@@ -19,7 +20,8 @@ TEST(TokenizerTest, ParenTest) {
     std::cerr << *tfile << "\n";
     TokenIterator it = tfile;
 
-    std::vector<std::string> expected = {"(", ")"};
+    std::vector<std::string> expected = {
+        "(", ")", ";", "fn", "main", "(", ")", "{", "}"};
 
     for (const auto &expected_token : expected) {
         ASSERT_TRUE(it.current() != nullptr);
