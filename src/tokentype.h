@@ -105,7 +105,9 @@
     X(Expression, Uncategorized)                                               \
     X(Statement, Uncategorized)                                                \
     X(CommaList, Uncategorized)                                                \
-    X(VariableWithType, Uncategorized)                                         \
+    X(VariableWithType, Expression)                                            \
+    X(Module, Uncategorized)                                                   \
+    X(Import, Uncategorized)                                                   \
     X(Count, Uncategorized) // This should always be the last item
 
 // Generate enum
@@ -129,7 +131,7 @@ constexpr TokenType category(TokenType type) {
 }
 
 // Generate toString function
-inline std::string_view toString(TokenType t) {
+constexpr inline std::string_view toString(TokenType t) {
     switch (t) {
 #define CASE_ITEM(name, ast_type)                                              \
     case TokenType::name:                                                      \
@@ -142,7 +144,7 @@ inline std::string_view toString(TokenType t) {
 }
 
 /// type is the specific type, typeOrCategory also checks for parent catergories
-inline bool doesMatch(TokenType type, TokenType typeOrCategory) {
+constexpr inline bool doesMatch(TokenType type, TokenType typeOrCategory) {
     for (; typeOrCategory != TokenType::Uncategorized;
          typeOrCategory = category(typeOrCategory)) {
         if (typeOrCategory == type) {

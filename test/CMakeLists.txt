@@ -6,6 +6,7 @@ add_executable(matsprak_tests
     tokentreelookup_test.cpp
     asttreelookup_test.cpp
     ast_test.cpp
+    codegen_test.cpp
 )
 target_link_libraries(matsprak_tests gtest_main matsprak_lib)
 target_include_directories(matsprak_tests PRIVATE ../src)

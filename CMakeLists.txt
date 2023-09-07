@@ -12,6 +12,7 @@ add_library(
     src/ast.cpp
     src/astgrouping.cpp
     src/asttreelookup.cpp
+    src/codegenerator.cpp
 )
 target_compile_features(matsprak_lib PRIVATE cxx_std_20)
 

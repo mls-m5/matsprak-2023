@@ -4,7 +4,7 @@
 #include <optional>
 
 void groupParentheses(Ast &ast) {
-    groupParentheses(ast, 1);
+    groupParentheses(ast, 0);
 }
 
 void groupParentheses(Ast &ast, ptrdiff_t a) {
@@ -79,9 +79,9 @@ void groupAst(Ast &ast, AstTreeLookup &t, StateComposite &composite) {
         }
 
         if (hypothesis != T::Invalid) {
-            bool isGroup = ast.type() == T::ParenGroup ||
-                           ast.type() == T::BraceGroup ||
-                           ast.type() == T::BracketGroup;
+            bool isGroup =
+                ast.type() == T::ParenGroup || ast.type() == T::BraceGroup ||
+                ast.type() == T::BracketGroup || ast.type() == T::RootNode;
             if (resIndex2 - index1 + 1 >= ast.children().size() && !isGroup) {
                 continue;
             }

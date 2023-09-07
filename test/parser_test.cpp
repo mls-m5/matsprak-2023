@@ -1,9 +1,7 @@
 
 #include "ast.h"
 #include "astgrouping.h"
-#include "asttreelookup.h"
 #include "testfile.h"
-#include "token.h"
 #include "tokenizer.h"
 #include <filesystem>
 #include <gtest/gtest.h>
@@ -108,6 +106,24 @@ TEST(ParserTest, Types) {
     std::string code = R"(
           x: int;
           let y: int;
+    )";
+
+    std::cerr << code << "\n";
+
+    auto file = TestFile{code};
+
+    auto ast = Ast{*file.tfile};
+
+    groupParentheses(ast);
+    groupAst(ast);
+
+    std::cerr << ast << std::endl;
+}
+
+TEST(ParserTest, ArgumentTypes) {
+    std::string code = R"(
+        (y: int, y: int)
+        (x: int)
     )";
 
     std::cerr << code << "\n";
