@@ -5,6 +5,21 @@ export struct Array {
     _value: T[num];
 }
 
+comptime generate_prop(name, T) {
+
+fn name (value: T) {
+    // How to join names? Test syntax, where everything associated to template
+    // is metaprogramming
+    template.join(_, name) = value;
+}
+
+fn name (value: T) -> T {
+    return template.join(_, name);
+}
+
+}
+
+
 export struct Ship {
     _x: float;
     _y: float;
@@ -24,6 +39,10 @@ export struct Ship {
     fn y(value: float) {
         _y = value;
     }
+
+    // If properties should be used or not is left for the reader to decide
+    // This should be functionally ekvivalent the above x property
+    generate_prop(x);
 
     fn move (int x, int y, -> res1, -> res2) mut {
         _x = x;

@@ -15,7 +15,7 @@ up on somebody else's computer.
 
 
 ## Struct member methods
-```
+```cpp
 struct Apa {
     _x: int;
     _y: int;
@@ -31,7 +31,7 @@ struct Apa {
 
 ## Interfaces and thick pointers
 
-```
+```cpp
 interface Movable {
     fn move(x: int, y: int);
 }
@@ -61,7 +61,7 @@ fn main() {
 
 Optional pointers must be checked before used
 
-```
+```cpp
 
 fn do_something(apa: Apa*) { ... }
 
@@ -85,7 +85,7 @@ Writing functions structs and interfaces is required to make the extendable code
 Effort should be made to make the templates simple and fast to parse,
 specifically when more comple meta logic is required.
 
-```
+```cpp
 struct Apa {
     fn print() { ... }
 }
@@ -110,13 +110,39 @@ genericPrint <T>(value: T&) {... value.write() ... }
 
 ```
 
+## Adding library is so fast that you do not need to specify exa
+
+```cpp
+// Package x, subpart y
+package x.y
+
+// Package x, subpart z
+package x.z
+
+// In file that uses the package
+import x;
+
+
+```
+
+## Standard library is easily accessible
+
+Either
+```cpp
+import std;
+```
+
+or, the standard library is included by default.
+
+
+
 ## Convenience stuff
 (should probably not be included)
 
 ### Member syntax
 Agnostic to if functions is defined inside or outside of class.
 
-```
+```cpp
 struct Apa {
     fn x() { ... }
 }
@@ -136,7 +162,7 @@ fn main() {
 Make functions specify a argument that is returned so chaining can be optimized
 
 syntax: (test)
-```
+```cpp
 fn print(x: mut Stream* stream, args...) -> return stream  {
    ...
 }
@@ -153,7 +179,7 @@ A function (that is not a pointer) will be called when a `operator=` is used.
 
 This will help when changing interfaces. (It will not help with abi breakage)
 
-```
+```cpp
 struct Apa {
     fn x(x: int) { ... }
     fn x() -> int { ... }
@@ -163,6 +189,24 @@ fn main() {
     let apa = Apa();
     apa.x = 10;
     let x = apa.x;
+}
+```
+
+### Automatic variable names
+
+This should most probably not be included:
+
+Are you tired of write names again when you already has kind of specified a name?
+
+In natural language for example, you could refer to an object like `a Car` 
+or `a Table`
+
+Therefore a fun thing to add would be that for example arguments would be automatically
+named if nothing else is specified.
+
+```cpp
+fn hello(String) { // Automatically defines the variable "string"
+    print(string);
 }
 ```
 
