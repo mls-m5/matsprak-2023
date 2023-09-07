@@ -60,7 +60,7 @@ void groupAst(Ast &ast, AstTreeLookup &t, StateComposite &composite) {
 
         for (size_t index2 = index1; index2 < ast.children().size(); ++index2) {
             auto &currentChild = *ast.children().at(index2);
-            auto res = state.push(currentChild.type());
+            auto res = state.push(currentChild.type(), ast.type());
             if (!res) {
                 break;
             }

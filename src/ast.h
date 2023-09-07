@@ -2,6 +2,7 @@
 
 #include "token.h"
 #include "tokenizer.h"
+#include "tokentype.h"
 #include <iosfwd>
 #include <memory>
 #include <vector>
@@ -18,7 +19,8 @@ struct Ast {
     Ast(TokenType type)
         : _type{type} {}
 
-    Ast(const TokenizedFile &file) {
+    Ast(const TokenizedFile &file)
+        : _type{RootNode} {
         for (auto &token : file.tokens) {
             _children.push_back(std::make_unique<Ast>(token));
         }
@@ -28,7 +30,7 @@ struct Ast {
         return *_token;
     }
 
-    void group(TokenType type,
+    Ast &group(TokenType type,
                iterator begin,
                iterator end,
                bool shouldStripSurrounding = false) {
@@ -54,21 +56,22 @@ struct Ast {
 
         _children.erase(begin + 1, end);
         *begin = std::move(child);
+        return *begin->get();
     }
 
-    auto begin() {
+    [[nodiscard]] auto begin() {
         return _children.begin();
     }
 
-    auto end() {
+    [[nodiscard]] auto end() {
         return _children.end();
     }
 
-    auto cbegin() const {
+    [[nodiscard]] auto cbegin() const {
         return _children.cbegin();
     }
 
-    auto cend() const {
+    [[nodiscard]] auto cend() const {
         return _children.cend();
     }
 
@@ -78,8 +81,26 @@ struct Ast {
         return _children;
     }
 
-    TokenType type() {
+    [[nodiscard]] TokenType type() {
         return _type;
+    }
+
+    void type(TokenType type) {
+        _type = type;
+    }
+
+    [[nodiscard]] Ast *find(TokenType type, bool shouldRecurse = false) {
+        for (auto &c : children()) {
+            if (doesMatch(c->type(), type)) {
+                return c.get();
+            }
+            if (shouldRecurse) {
+                if (auto f = c->find(type, true)) {
+                    return f;
+                }
+            }
+        }
+        return nullptr;
     }
 
 private:

@@ -140,3 +140,14 @@ inline std::string_view toString(TokenType t) {
         throw std::runtime_error{"Invalid TokenType"};
     }
 }
+
+/// type is the specific type, typeOrCategory also checks for parent catergories
+inline bool doesMatch(TokenType type, TokenType typeOrCategory) {
+    for (; typeOrCategory != Uncategorized;
+         typeOrCategory = category(typeOrCategory)) {
+        if (typeOrCategory == type) {
+            return true;
+        }
+    }
+    return false;
+}

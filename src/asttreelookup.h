@@ -18,10 +18,8 @@ struct Matcher {
         , result{(result != Uncategorized) ? result : t} {}
 
     bool operator()(TokenType t) const {
-        for (; t != Uncategorized; t = category(t)) {
-            if (t == type) {
-                return true;
-            }
+        if (doesMatch(type, t)) {
+            return true;
         }
 
         return false;
@@ -38,14 +36,20 @@ struct Matcher {
 class AstTreeLookup {
 public:
     struct Node {
+
         Node *parent = nullptr;
         Matcher matcher;
+        std::vector<Matcher> ignoredParents;
+        TokenType type = Uncategorized;
+
+        Node(const Node &) = delete;
+        Node(Node &&) = delete;
+        Node &operator=(const Node &) = delete;
+        Node &operator=(Node &&) = delete;
 
         Node(Node *parent, Matcher matcher)
             : parent{parent}
             , matcher{matcher} {}
-
-        TokenType type = Uncategorized;
 
         bool hasType() const {
             return type != TokenType{Uncategorized};
@@ -63,9 +67,21 @@ public:
             return nullptr;
         }
 
-        Node *find(TokenType t) {
+        bool doesMatchIgnored(TokenType type) const {
+            for (auto p : ignoredParents) {
+                if (p(type)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        Node *find(TokenType t, TokenType parent) {
             for (auto &c : children) {
                 if (c.matcher(t)) {
+                    if (c.doesMatchIgnored(parent)) {
+                        return nullptr;
+                    }
                     return &c;
                 }
             }
@@ -78,29 +94,36 @@ public:
                     return c;
                 }
             }
-            children.push_back(Node{this, t});
+            children.emplace_back(this, t);
             return children.back();
         }
 
         friend AstTreeLookup;
 
-        void add(TokenType type, std::vector<Matcher> key) {
+        Node &add(TokenType type,
+                  std::vector<Matcher> key,
+                  std::vector<Matcher> ignoredParents) {
             if (key.empty()) {
                 this->type = type;
-                return;
+                this->ignoredParents = std::move(ignoredParents);
+                return *this;
             }
             findOrCreate(key.front())
-                .add(type, std::vector(key.begin() + 1, key.end()));
+                .add(type,
+                     std::vector(key.begin() + 1, key.end()),
+                     ignoredParents);
+
+            return *this;
         }
     };
 
-    void add(TokenType resT, std::vector<Matcher> arr) {
-        root.add(resT, arr);
+    void add(TokenType resT,
+             std::vector<Matcher> arr,
+             std::vector<Matcher> ignoredParents = {}) {
+        root.add(resT, arr, std::move(ignoredParents));
     }
 
-    AstTreeLookup() {
-        //        using VecT = std::vector<Matcher>;
-    }
+    AstTreeLookup() {}
 
     Node root{{}, {Uncategorized}};
 };
@@ -116,8 +139,8 @@ public:
 
     AstTreeState() = default;
 
-    AstTreeLookup::Node *push(TokenType t) {
-        if (auto f = current->find(t)) {
+    AstTreeLookup::Node *push(TokenType t, TokenType parent) {
+        if (auto f = current->find(t, parent)) {
             current = f;
             return f;
         }
@@ -138,7 +161,7 @@ class StateComposite {
 public:
     AstTreeState state;
 
-    std::vector<AstTreeLookup> lookups;
+    std::list<AstTreeLookup> lookups;
 
     StateComposite() {
         // Using c++ operator precedence
@@ -148,16 +171,17 @@ public:
             // Complex expressions
             auto &l = lookups.emplace_back();
             l.add(StructDeclaration, {Struct, {Word, Name}, BraceGroup});
-            l.add(FunctionDeclaration, {Fn, Word, ParenGroup});
-            l.add(FunctionDeclaration, {Fn, Word, ParenGroup, BraceGroup});
+            l.add(FunctionDeclaration, {Fn, {Word, Name}, ParenGroup});
+            l.add(FunctionDeclaration,
+                  {Fn, {Word, Name}, ParenGroup, BraceGroup});
         }
         {
             // 2
             auto &l = lookups.emplace_back();
 
-            l.add(FunctionCall,
-                  {Expression,
-                   ParenGroup}); // Does not seem to work for member accessors
+            l.add(
+                FunctionCall, {Expression, ParenGroup}, {FunctionDeclaration});
+
             l.add(MemberAccessor,
                   {Expression, MemberAccessOperator, Expression});
         }
@@ -196,5 +220,6 @@ public:
     StateComposite(StateComposite &&) = delete;
     StateComposite &operator=(const StateComposite &) = delete;
     StateComposite &operator=(StateComposite &&) = delete;
+    ~StateComposite() = default;
     void reset() {}
 };
