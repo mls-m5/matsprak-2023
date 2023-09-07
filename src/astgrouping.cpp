@@ -85,7 +85,7 @@ void groupAst(Ast &ast, AstTreeLookup &t, StateComposite &composite) {
             if (resIndex2 - index1 + 1 >= ast.children().size() && !isGroup) {
                 continue;
             }
-            ast.group(
+            auto &newAst = ast.group(
                 hypothesis, ast.begin() + index1, ast.begin() + resIndex2 + 1);
 
             shouldRedoSame = true;
@@ -93,8 +93,12 @@ void groupAst(Ast &ast, AstTreeLookup &t, StateComposite &composite) {
     }
 
     for (auto &c : ast.children()) {
-        groupAst(*c, composite);
+        if (!c->isParsed()) {
+            groupAst(*c, composite);
+        }
     }
+
+    ast.isParsed(true);
 }
 
 void groupAst(Ast &ast, StateComposite &composite) {

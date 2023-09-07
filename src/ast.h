@@ -89,6 +89,14 @@ struct Ast {
         _type = type;
     }
 
+    bool isParsed() const {
+        return _isParsed;
+    }
+
+    void isParsed(bool value) {
+        _isParsed = value;
+    }
+
     [[nodiscard]] Ast *find(TokenType type, bool shouldRecurse = false) {
         for (auto &c : children()) {
             if (doesMatch(c->type(), type)) {
@@ -110,6 +118,7 @@ private:
     ContainerT _children;
     std::unique_ptr<Ast> openAst;
     std::unique_ptr<Ast> closeAst;
+    bool _isParsed = false;
 };
 
 std::ostream &operator<<(std::ostream &stream, Ast &ast);
