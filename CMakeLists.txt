@@ -8,7 +8,6 @@ add_library(
     STATIC
     src/tokenizer.cpp
     src/file.cpp
-    src/parser.cpp
     src/token.cpp
     src/ast.cpp
     src/astgrouping.cpp

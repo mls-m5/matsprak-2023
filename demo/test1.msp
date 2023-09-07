@@ -35,14 +35,14 @@ export struct Ship {
 }
 
 fn main() -> (res1: int, res2: int) {
-    let x = new(Array(int, 10));
+    let x = new(Array(int, 10)); // This syntax is not decided
 
     let s = new(Ship(
         x = 10,
         y = 20,
     ));
 
-    let a = alloc(Array(Ship, 20, {}))
+    let a = alloc(Array(Ship, 20, {})) // This syntax is not decided
 
     print(sys.args(1));
 
