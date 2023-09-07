@@ -8,16 +8,18 @@ void groupParentheses(Ast &ast) {
 }
 
 void groupParentheses(Ast &ast, ptrdiff_t a) {
+    using T = TokenType;
+
     auto isBegin =
         [](TokenType t) -> std::optional<std::pair<TokenType, TokenType>> {
-        if (t == ParenthesesBegin) {
-            return std::pair{ParenthesesEnd, ParenGroup};
+        if (t == T::ParenthesesBegin) {
+            return std::pair{T::ParenthesesEnd, T::ParenGroup};
         }
-        if (t == BraceBegin) {
-            return std::pair{BraceEnd, BraceGroup};
+        if (t == T::BraceBegin) {
+            return std::pair{T::BraceEnd, T::BraceGroup};
         }
-        if (t == BracketBegin) {
-            return std::pair{BracketEnd, BracketGroup};
+        if (t == T::BracketBegin) {
+            return std::pair{T::BracketEnd, T::BracketGroup};
         }
         return std::nullopt;
     };
@@ -45,6 +47,7 @@ void groupParentheses(Ast &ast, ptrdiff_t a) {
 void groupAst(Ast &ast, StateComposite &composite);
 
 void groupAst(Ast &ast, AstTreeLookup &t, StateComposite &composite) {
+    using T = TokenType;
     //    auto t = AstTreeLookup{};
     auto state = AstTreeState{t};
 
@@ -55,7 +58,7 @@ void groupAst(Ast &ast, AstTreeLookup &t, StateComposite &composite) {
         state.reset();
         auto index1 = i - 2;
 
-        TokenType hypothesis = Invalid;
+        TokenType hypothesis = T::Invalid;
         auto resIndex2 = 0;
 
         for (size_t index2 = index1; index2 < ast.children().size(); ++index2) {
@@ -65,20 +68,20 @@ void groupAst(Ast &ast, AstTreeLookup &t, StateComposite &composite) {
                 break;
             }
             // Prioritize longer matches
-            if (res->type == Uncategorized) {
+            if (res->type == T::Uncategorized) {
                 continue;
             }
-            if (res->type == Invalid) {
+            if (res->type == T::Invalid) {
                 continue;
             }
             hypothesis = res->type;
             resIndex2 = index2;
         }
 
-        if (hypothesis != Invalid) {
-            bool isGroup = ast.type() == ParenGroup ||
-                           ast.type() == BraceGroup ||
-                           ast.type() == BracketGroup;
+        if (hypothesis != T::Invalid) {
+            bool isGroup = ast.type() == T::ParenGroup ||
+                           ast.type() == T::BraceGroup ||
+                           ast.type() == T::BracketGroup;
             if (resIndex2 - index1 + 1 >= ast.children().size() && !isGroup) {
                 continue;
             }

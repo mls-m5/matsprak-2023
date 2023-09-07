@@ -1,7 +1,6 @@
 
 #include "ast.h"
 #include "astgrouping.h"
-#include "asttreelookup.h"
 #include "testfile.h"
 #include "tokenizer.h"
 #include "tokentype.h"
@@ -34,5 +33,5 @@ TEST(AstTreeLookup, AFunctionDeclarationShouldNotContainAFunctionCall) {
     groupAst(ast);
 
     std::cerr << ast << std::endl;
-    EXPECT_FALSE(ast.find(FunctionCall, true));
+    EXPECT_FALSE(ast.find(TokenType::FunctionCall, true));
 }

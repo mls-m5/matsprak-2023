@@ -109,7 +109,7 @@
     X(Count, Uncategorized) // This should always be the last item
 
 // Generate enum
-enum TokenType {
+enum class TokenType {
 #define ENUM_ITEM(name, ast_type) name,
     TOKEN_TYPE_LIST(ENUM_ITEM)
 #undef ENUM_ITEM
@@ -119,8 +119,8 @@ enum TokenType {
 constexpr TokenType category(TokenType type) {
     switch (type) {
 #define CASE_ITEM(name, ast_type)                                              \
-    case name:                                                                 \
-        return ast_type;
+    case TokenType::name:                                                      \
+        return TokenType::ast_type;
         TOKEN_TYPE_LIST(CASE_ITEM)
 #undef CASE_ITEM
     default:
@@ -132,7 +132,7 @@ constexpr TokenType category(TokenType type) {
 inline std::string_view toString(TokenType t) {
     switch (t) {
 #define CASE_ITEM(name, ast_type)                                              \
-    case name:                                                                 \
+    case TokenType::name:                                                      \
         return #name;
         TOKEN_TYPE_LIST(CASE_ITEM)
 #undef CASE_ITEM
@@ -143,7 +143,7 @@ inline std::string_view toString(TokenType t) {
 
 /// type is the specific type, typeOrCategory also checks for parent catergories
 inline bool doesMatch(TokenType type, TokenType typeOrCategory) {
-    for (; typeOrCategory != Uncategorized;
+    for (; typeOrCategory != TokenType::Uncategorized;
          typeOrCategory = category(typeOrCategory)) {
         if (typeOrCategory == type) {
             return true;

@@ -113,11 +113,11 @@ genericPrint <T>(value: T&) {... value.write() ... }
 ## Adding library is so fast that you do not need to specify exa
 
 ```cpp
-// Package x, subpart y
-package x.y
+// module x, subpart y
+module x.y
 
-// Package x, subpart z
-package x.z
+// module x, subpart z
+module x.z
 
 // In file that uses the package
 import x;

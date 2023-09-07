@@ -1,6 +1,7 @@
 #pragma once
 
 #include "token.h"
+#include "tokentype.h"
 #include <exception>
 #include <map>
 #include <optional>
@@ -8,8 +9,10 @@
 /// TODO: Optimize when the basic idea is fixed
 /// For example save between runs
 struct TokenTreeLookup {
+    using T = TokenType;
+
     struct Node {
-        TokenType type = Invalid;
+        TokenType type = T::Invalid;
         std::map<char, Node> children; // Should probably be a vector...
 
     private:
@@ -34,65 +37,65 @@ struct TokenTreeLookup {
     // TokenTreeLookup constructor
     TokenTreeLookup() {
         // Keywords
-        root.add("let", Let);
-        root.add("fn", Fn);
-        root.add("template", Template);
-        root.add("type", Type);
-        root.add("struct", Struct);
+        root.add("let", T::Let);
+        root.add("fn", T::Fn);
+        root.add("template", T::Template);
+        root.add("type", T::Type);
+        root.add("struct", T::Struct);
 
         // Single-character Operators
-        root.add("+", Plus);
-        root.add("-", Minus);
-        root.add("*", Multiply);
-        root.add("/", Divide);
-        root.add("%", Modulo);
+        root.add("+", T::Plus);
+        root.add("-", T::Minus);
+        root.add("*", T::Multiply);
+        root.add("/", T::Divide);
+        root.add("%", T::Modulo);
 
-        root.add("&", BinaryAnd);
-        root.add("|", BinaryOr);
-        root.add("&&", And);
-        root.add("||", Or);
-        root.add("^", Xor);
-        root.add("!", Not);
-        root.add("~", Tilde);
-        root.add("<", Less);
-        root.add(">", Greater);
-        root.add("=", Equals);
+        root.add("&", T::BinaryAnd);
+        root.add("|", T::BinaryOr);
+        root.add("&&", T::And);
+        root.add("||", T::Or);
+        root.add("^", T::Xor);
+        root.add("!", T::Not);
+        root.add("~", T::Tilde);
+        root.add("<", T::Less);
+        root.add(">", T::Greater);
+        root.add("=", T::Equals);
 
         // Multi-character Operators
-        root.add("++", PlusPlus);
-        root.add("--", MinusMinus);
-        root.add("+=", PlusEqual);
-        root.add("-=", MinusEqual);
-        root.add("*=", MulEqual);
-        root.add("/=", DivEqual);
-        root.add("%=", ModEqual);
-        root.add("&=", AndEqual);
-        root.add("|=", OrEqual);
-        root.add("^=", XorEqual);
-        root.add(">>=", RightShiftEqual);
-        root.add("<<=", LeftShiftEqual);
-        root.add("==", EqualEqual);
-        root.add("!=", NotEqual);
-        root.add("<=", LessOrEqual);
-        root.add(">=", GreaterOrEqual);
-        root.add("&&", LogicalAnd);
-        root.add("||", LogicalOr);
-        root.add("<<", LeftShift);
-        root.add(">>", RightShift);
-        root.add("->", Arrow);
-        root.add("->*", ArrowStar);
-        root.add("::", ScopeResolution);
-        root.add(".*", DotStar);
+        root.add("++", T::PlusPlus);
+        root.add("--", T::MinusMinus);
+        root.add("+=", T::PlusEqual);
+        root.add("-=", T::MinusEqual);
+        root.add("*=", T::MulEqual);
+        root.add("/=", T::DivEqual);
+        root.add("%=", T::ModEqual);
+        root.add("&=", T::AndEqual);
+        root.add("|=", T::OrEqual);
+        root.add("^=", T::XorEqual);
+        root.add(">>=", T::RightShiftEqual);
+        root.add("<<=", T::LeftShiftEqual);
+        root.add("==", T::EqualEqual);
+        root.add("!=", T::NotEqual);
+        root.add("<=", T::LessOrEqual);
+        root.add(">=", T::GreaterOrEqual);
+        root.add("&&", T::LogicalAnd);
+        root.add("||", T::LogicalOr);
+        root.add("<<", T::LeftShift);
+        root.add(">>", T::RightShift);
+        root.add("->", T::Arrow);
+        root.add("->*", T::ArrowStar);
+        root.add("::", T::ScopeResolution);
+        root.add(".*", T::DotStar);
 
         // Punctuation and other symbols
-        root.add("(", ParenthesesBegin);
-        root.add(")", ParenthesesEnd);
-        root.add("{", BraceBegin);
-        root.add("}", BraceEnd);
-        root.add(",", Comma);
-        root.add(";", Semicolon);
-        root.add(":", Colon);
-        root.add(".", Period);
+        root.add("(", T::ParenthesesBegin);
+        root.add(")", T::ParenthesesEnd);
+        root.add("{", T::BraceBegin);
+        root.add("}", T::BraceEnd);
+        root.add(",", T::Comma);
+        root.add(";", T::Semicolon);
+        root.add(":", T::Colon);
+        root.add(".", T::Period);
     }
 
     TokenTreeLookup(const TokenTreeLookup &) = delete;
@@ -105,7 +108,7 @@ struct TokenTreeLookup {
     TokenType push(char c) {
         if (auto f = current->find(c)) {
             current = f;
-            return Invalid;
+            return T::Invalid;
         }
 
         return std::exchange(current, &root)->type;

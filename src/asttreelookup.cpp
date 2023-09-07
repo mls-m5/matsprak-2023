@@ -1,54 +1,61 @@
 #include "asttreelookup.h"
+#include "tokentype.h"
 
 StateComposite::StateComposite() {
     // Using c++ operator precedence
     // https://en.cppreference.com/w/cpp/language/operator_precedence
 
+    using T = TokenType;
+
     {
         // Complex expressions
         auto &l = lookups.emplace_back();
-        l.add(StructDeclaration, {Struct, {Word, Name}, BraceGroup});
-        l.add(FunctionDeclaration, {Fn, {Word, Name}, ParenGroup});
-        l.add(FunctionDeclaration,
-              {Fn, {Word, Name}, ParenGroup, BraceGroup});
+        l.add(T::StructDeclaration,
+              {T::Struct, {T::Word, T::Name}, T::BraceGroup});
+        l.add(T::FunctionDeclaration,
+              {T::Fn, {T::Word, T::Name}, T::ParenGroup});
+        l.add(T::FunctionDeclaration,
+              {T::Fn, {T::Word, T::Name}, T::ParenGroup, T::BraceGroup});
     }
     {
         // 2
         auto &l = lookups.emplace_back();
 
-        l.add(
-            FunctionCall, {Expression, ParenGroup}, {FunctionDeclaration});
+        l.add(T::FunctionCall,
+              {T::Expression, T::ParenGroup},
+              {T::FunctionDeclaration});
 
-        l.add(MemberAccessor,
-              {Expression, MemberAccessOperator, Expression});
+        l.add(T::MemberAccessor,
+              {T::Expression, T::MemberAccessOperator, T::Expression});
     }
 
     {
         // 16
         auto &l = lookups.emplace_back();
 
-        l.add(AssignmentExpression,
-              {Expression, {Equals, BinaryOperator}, Expression});
+        l.add(T::AssignmentExpression,
+              {T::Expression, {T::Equals, T::BinaryOperator}, T::Expression});
     }
 
     {
         // Unordered
         auto &l = lookups.emplace_back();
 
-        l.add(BinaryOperation, {Expression, BinaryOperator, Expression});
+        l.add(T::BinaryOperation,
+              {T::Expression, T::BinaryOperator, T::Expression});
 
-        l.add(LetStatement, {Let, AssignmentExpression, Semicolon});
+        l.add(T::LetStatement, {T::Let, T::AssignmentExpression, T::Semicolon});
 
-               /// TODO: Create separate result type?
-        l.add(LetStatement, {Let, Word, Colon, Expression});
+        /// TODO: Create separate result type?
+        l.add(T::LetStatement, {T::Let, T::Word, T::Colon, T::Expression});
 
-               /// TODO: Why does Expression work, but not Word for the first type?
-        l.add(VariableWithType, {Expression, Colon, Expression});
+        /// TODO: Why does Expression work, but not Word for the first type?
+        l.add(T::VariableWithType, {T::Expression, T::Colon, T::Expression});
     }
     {
         // Semicolons
         auto &l = lookups.emplace_back();
-        l.add(Statement, {Expression, Semicolon});
-        l.add(CommaList, {Expression, Comma, Expression});
+        l.add(T::Statement, {T::Expression, T::Semicolon});
+        l.add(T::CommaList, {T::Expression, T::Comma, T::Expression});
     }
 }

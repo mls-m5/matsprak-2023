@@ -2,6 +2,7 @@
 
 #include "file.h"
 #include "token.h"
+#include "tokentype.h"
 #include <iosfwd>
 
 struct TokenizedFile {
@@ -15,7 +16,7 @@ struct TokenizedFile {
 
     std::shared_ptr<File> file;
     std::vector<Token> tokens;
-    Token root = Token{"", RootNode};
+    Token root = Token{"", TokenType::RootNode};
 };
 
 inline std::ostream &operator<<(std::ostream &stream, TokenizedFile &file) {

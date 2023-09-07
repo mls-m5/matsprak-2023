@@ -1,6 +1,7 @@
 #include "tokenizer.h"
 #include "token.h"
 #include "tokentreelookup.h"
+#include "tokentype.h"
 #include <memory>
 #include <regex>
 #include <stdexcept>
@@ -78,20 +79,20 @@ void tokenizeLine(std::string_view line,
     auto charType = Space;
     auto firstType = Space;
 
-    auto finishToken = [&](TokenType foundType = Invalid) {
+    auto finishToken = [&](TokenType foundType = TokenType::Invalid) {
         if (current.empty()) {
             return;
         }
 
-        auto type = (foundType == Invalid) ? t.get() : foundType;
+        auto type = (foundType == TokenType::Invalid) ? t.get() : foundType;
         //        if (!foundType) {
         //        auto type = t.get();
         //        }
-        if (type == Invalid) {
-            type = Word;
+        if (type == TokenType::Invalid) {
+            type = TokenType::Word;
             if (firstType == Numeric) {
                 // TODO: Fix when names ends with digits
-                type = NumericLiteral;
+                type = TokenType::NumericLiteral;
             }
         }
         tokens.emplace_back(current, type);
@@ -116,7 +117,7 @@ void tokenizeLine(std::string_view line,
 
         auto type = t.push(c);
 
-        if (charType == Operator && type != Invalid) {
+        if (charType == Operator && type != TokenType::Invalid) {
             finishToken(type);
             t.push(c); // Since push lags behind a character
         }

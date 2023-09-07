@@ -20,7 +20,7 @@ struct Ast {
         : _type{type} {}
 
     Ast(const TokenizedFile &file)
-        : _type{RootNode} {
+        : _type{TokenType::RootNode} {
         for (auto &token : file.tokens) {
             _children.push_back(std::make_unique<Ast>(token));
         }
@@ -105,7 +105,7 @@ struct Ast {
 
 private:
     const Token *_token = nullptr;
-    TokenType _type = Invalid;
+    TokenType _type = TokenType::Invalid;
 
     ContainerT _children;
     std::unique_ptr<Ast> openAst;

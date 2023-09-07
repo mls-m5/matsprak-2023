@@ -13,9 +13,9 @@
 #include <vector>
 
 struct Matcher {
-    Matcher(TokenType t, TokenType result = Uncategorized)
+    Matcher(TokenType t, TokenType result = TokenType::Uncategorized)
         : type{t}
-        , result{(result != Uncategorized) ? result : t} {}
+        , result{(result != TokenType::Uncategorized) ? result : t} {}
 
     bool operator()(TokenType t) const {
         if (doesMatch(type, t)) {
@@ -29,18 +29,20 @@ struct Matcher {
         return other.type == type && other.result == result;
     }
 
-    TokenType type = Uncategorized;
-    TokenType result = Uncategorized;
+    TokenType type = TokenType::Uncategorized;
+    TokenType result = TokenType::Uncategorized;
 };
 
 class AstTreeLookup {
 public:
+    using T = TokenType;
+
     struct Node {
 
         Node *parent = nullptr;
         Matcher matcher;
         std::vector<Matcher> ignoredParents;
-        TokenType type = Uncategorized;
+        TokenType type = T::Uncategorized;
 
         Node(const Node &) = delete;
         Node(Node &&) = delete;
@@ -52,7 +54,7 @@ public:
             , matcher{matcher} {}
 
         bool hasType() const {
-            return type != TokenType{Uncategorized};
+            return type != TokenType{T::Uncategorized};
         }
 
         /// List since we want to preserve the elements location in memory
@@ -125,7 +127,7 @@ public:
 
     AstTreeLookup() {}
 
-    Node root{{}, {Uncategorized}};
+    Node root{{}, {T::Uncategorized}};
 };
 
 class AstTreeState {
