@@ -29,6 +29,44 @@ struct Apa {
 ```
 
 
+## Non nullable pointers
+
+Pointers is non nullable at compile time, and when dereferencing a optional pointer
+you need to make sure that it is set. In memory a optional that does not have a
+value is just represented with a zero/nullptr.
+
+## Reference types in function arguments
+
+`in` ie Const references (non nullable) uses a companion type instead of just a pointer.
+
+For regular types that could be just a non, null pointer, but for types like string
+or vector the reference type is a view to the elements in the vector. (compare
+to std::string_view in c++, or std::span for std::vector)
+
+```cpp
+fn hello1(str: in string) {
+   // The in argument is actually not a string, but a reference type that points
+   // to the elements
+}
+```
+
+
+Named out arguments (arguments that is not specified as return types) is sent
+as a non nullable reference (i. e. pointer)
+
+Optional out arguments is specified as a optional pointer.
+
+```cpp
+fn hello2(str: out string, str2: out string?) {
+    
+}
+```
+
+Inout arguments works in the same way as out arguments, but they are expected to
+be initialized by the compiler before the function is called.
+
+
+
 ## Interfaces and thick pointers
 
 ```cpp
@@ -110,7 +148,7 @@ genericPrint <T>(value: T&) {... value.write() ... }
 
 ```
 
-## Adding library is so fast that you do not need to specify exa
+## Importing library is so fast that you do not need to specify exa
 
 ```cpp
 // module x, subpart y
@@ -134,7 +172,7 @@ import std;
 
 or, the standard library is included by default.
 
-
+## All memory is null initialized as standard.
 
 ## Convenience stuff
 (should probably not be included)
@@ -209,4 +247,60 @@ fn hello(String) { // Automatically defines the variable "string"
     print(string);
 }
 ```
+
+
+### Controlled construction
+
+By controlling what state the objects are in (construction called, not called etc)
+you can do magick stuff like have functions that can apply changes to a object
+or return a object
+
+```cpp
+// Out is similar to c++ &, but the compiler know that the argument is supposed
+// to be replaced.
+fn return_object(x: out Apa);
+
+/// 
+fn return_object_optional(x: optional out Apa) {
+   if (x) { // TODO: FIx this syntax
+       *x = Apa{};
+   }
+}
+
+
+fn main() {
+    
+
+
+    auto apa1 = Apa{};
+    // If the constructor is called before, its destructor will be called before
+    // the object is sent into the function
+    return_object(apa);
+    
+    /// Out arguments can be used for assignment. And if you do not specify the
+    /// in variable, it is returned instead.
+    auto apa2 = return_object(apa);
+    
+    
+}
+```
+
+
+### This syntax
+
+Also possibly not included in final version
+
+Instead of specifying `this` for member variables, underscores are used.
+
+```cpp
+struct Apa {
+    x: int
+    
+
+    fn x(value: int) {
+        _x = value; // _x refers to the value x, and the x(function) shadows the variable
+    }
+}
+```
+
 
